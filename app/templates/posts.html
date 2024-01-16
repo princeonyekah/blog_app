@@ -1,0 +1,49 @@
+{% set title = 'Posts' %}
+{% include "head.html" %}
+
+<div class="container">
+  <div class="row">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="text-center mb-4">All Posts by {{ author.name }}</h2>
+        {% if posts|length > 0 %}
+          {% for post in posts %}
+              <div class="card mb-3">
+              <div class="card-body">
+                  <h3 class="card-title">{{ post.title }}</h3>
+                  <p class="card-text">{{ post.content }}</p>
+                  <p class="card-text"><small class="text-muted">Created on {{ post.createdAt }}</small></p>
+              </div>
+              </div>
+          {% endfor %}
+        {% else %}
+          <p>No posts available.</p>
+        {% endif %}
+      </div>
+
+      <div class="col-md-8">
+        <form method="post" action="/post">
+          <!-- Post Title -->
+          <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter post title">
+          </div>
+          <!-- Post Content -->
+          <div class="mb-3">
+            <label for="content" class="form-label">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="5" placeholder="Write your content here"></textarea>
+          </div>
+          <!-- Author -->
+          <input type="hidden" name="authorEmail" value="{{ author.email }}">
+          <input type="hidden" name="authorId" value="{{ author.id }}">
+          <!-- Submit Button -->
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit Post</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "foot.html" %}

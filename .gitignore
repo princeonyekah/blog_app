@@ -1,0 +1,80 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Instance-specific configuration and folders
+instance/
+
+# Flask app config
+*.cfg
+
+# Database files
+*.db
+*.sqlite
+
+# Pytest
+.cache
+.pytest_cache/
+
+# Log files
+*.log
+
+# Session info
+flask_session
+
+# If using Jupyter notebooks
+.ipynb_checkpoints
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# If using coverage.py
+htmlcov/
+.coverage
+.coverage.*
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pipenv
+Pipfile.lock
+
+# dotenv
+.env
+.env.*
+
+# IDEs
+.vscode
+.idea
