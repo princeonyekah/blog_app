@@ -1,0 +1,12 @@
+body {
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    background: url('../land.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.content {
+    /* Add styles for your content area */
+    text-align: center;
+    padding: 50px;
+}
