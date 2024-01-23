@@ -1,6 +1,5 @@
 """Entry point to the Flask application"""
-from flask import Flask, redirect
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template
 from flask_jwt_extended import JWTManager
 from .config import Config
 from .routes.auth_routes import auth_routes
@@ -17,13 +16,13 @@ def create_app(config_class=Config):
     setup_middlewares(app)
 
     # Define routes
-    @app.route("/")
+    @app.route("/", methods=["GET"])
     def index():
-        return redirect("/login")
-    
-    @app.route('/landing')
+        return render_template("landing.html")
+
+    @app.route("/", methods=["GET"])
     def landing():
-        return render_template('landing.html')
+        return render_template('')
 
     # Registering blueprints from your routes modules
     app.register_blueprint(auth_routes)
