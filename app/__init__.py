@@ -20,7 +20,7 @@ def create_app(config_class=Config):
     def index():
         return render_template("landing.html")
 
-    @app.route('/')
+    @app.route("/", methods=["GET"])
     def landing():
         return render_template('')
 
