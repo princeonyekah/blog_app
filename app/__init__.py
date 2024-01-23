@@ -15,14 +15,14 @@ def create_app(config_class=Config):
     JWTManager(app)
     setup_middlewares(app)
 
-    # Define routes
+    # Defining routes
     @app.route("/", methods=["GET"])
     def index():
         return render_template("landing.html")
 
-    @app.route("/", methods=["GET"])
+    @app.route("/write", methods=["GET"])
     def landing():
-        return render_template('')
+        return render_template('write.html')
 
     # Registering blueprints from your routes modules
     app.register_blueprint(auth_routes)
