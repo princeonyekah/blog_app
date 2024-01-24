@@ -32,3 +32,8 @@ def create_post():
     else:
         print("Unauthorized")
         abort(403)
+
+
+@post_routes.route("/submit_post", methods=["POST"])
+def submit():
+    return redirect("/")
