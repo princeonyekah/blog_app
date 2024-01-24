@@ -22,11 +22,7 @@ def create_app(config_class=Config):
 
     @app.route("/write", methods=["GET"])
     def landing():
-        return render_template('write.html')
-
-    @app.route("/submit_post", methods=["POST"])
-    def submit():
-        return redirect("/")
+        return render_template("write.html")
 
     # Registering blueprints from your routes modules
     app.register_blueprint(auth_routes)
