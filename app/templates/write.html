@@ -11,15 +11,19 @@
 <body>
   <nav class="navbar navbar-expand-lg bg-light nav">
     <div class="container-fluid">
+      <div class="d-flex align-items-end">
+        <a class="navbar-brand" href="#"> <img src="../static/InKVue.png" style="width: 180px; padding-left: 60px;" alt="The InKVue Logo"></a>
+        <h6 class="text-muted fs-6" style="font-style: italic;">Draft in Princewill Onyekah</h6> <!-- The name would need a placeholder to be taken from the database-->
+      </div>
 
-      <a class="navbar-brand" href="#"> <img src="../static/InKVue.png" alt="The InKVue Logo"></a>
+
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
-          
+
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
             </li>
@@ -45,7 +49,7 @@
       <div class="mb-3">
         <label for="post-content" class="form-label">Content</label>
         <textarea class="form-control" id="post-content" name="post_content" rows="8" required></textarea>
-        <button class="btn btn-outline-success" type="submit"> Publish </button>
+        <button class="btn btn-outline-success mt-3 " type="submit"> Publish </button>
       </div>
     </form>
 
