@@ -21,7 +21,7 @@ auth_routes = Blueprint("auth", __name__)
 @auth_routes.route("/login", methods=["GET"])
 def login():
     """Show login page."""
-    return render_template("login.html", showLogout=False)
+    return render_template("login.html", showLogout=False, showLogin = True)
 
 
 @auth_routes.route("/login", methods=["POST"])

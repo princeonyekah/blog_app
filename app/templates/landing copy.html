@@ -18,8 +18,29 @@
   </style>
 </head>
 <body>
+  <nav class="navbar navbar-expand-lg bg-light nav">
+    <div class="container-fluid">
 
-  {% include "navigation.html" %}
+      <a class="navbar-brand" href="#"> <img src="../static/InKVue.png" alt="The InKVue Logo"></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/write">Write</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/login">Sign in</a>
+          </li>
+            </ul>
+            <button class="btn btn-outline-success" type="submit">Get Started</button>
+
+
+      </div>
+    </div>
+  </nav>
 
   <div class="stay-curious fs-1 text fw-bolder text-dark w-50 h2 "> Stay Curious.</div>
   <div class="discover-text mx-auto  p-12 ms-3 fw-normal w-50 h1"><p>Discover stories, thinking,<br> and expertise from writers <br>on any topic.</p></div>

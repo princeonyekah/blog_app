@@ -1,11 +1,12 @@
 """Post routes"""
-from flask import Blueprint, request, redirect, abort
+from flask import Blueprint, request, redirect, abort,render_template
 from app.utils.auth import authorize
 from app.config import Config
 
 prisma = Config.PRISMA
 
 post_routes = Blueprint("post", __name__)
+
 
 
 @post_routes.route("/", methods=["POST"])
@@ -32,6 +33,8 @@ def create_post():
     else:
         print("Unauthorized")
         abort(403)
+
+
 
 
 @post_routes.route("/submit_post", methods=["POST"])

@@ -9,6 +9,7 @@
     <title>{{ title }}</title>
 </head>
 <body>
+
   <nav class="navbar navbar-expand-lg bg-light nav">
     <div class="container-fluid">
       <div class="d-flex align-items-end">
@@ -41,16 +42,16 @@
     <h1 class="mb-4">Write your Blog Post</h1>
 
     <form action="/submit_post" method="POST">
-      <div class="mb-3">
-        <label for="post-title" class="form-label">Title</label>
-        <input type="text" class="form-control" id="post-title" name="post_title" required>
-      </div>
 
-      <div class="mb-3">
-        <label for="post-content" class="form-label">Content</label>
-        <textarea class="form-control" id="post-content" name="post_content" rows="8" required></textarea>
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+
+
+      <!-- <div class="mb-3"> -->
+        <label for="content" class="form-label">Content</label>
+        <textarea class="form-control" id="content" name="content" rows="8" required></textarea>
         <button class="btn btn-outline-success mt-3 " type="submit"> Publish </button>
-      </div>
+
     </form>
 
   </div>

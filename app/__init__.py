@@ -29,7 +29,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_routes)
     app.register_blueprint(user_routes, url_prefix="/user")
     app.register_blueprint(post_routes, url_prefix="/post")
-    app.register_blueprint(submitpost_routes, url_prefix="/submitpost")
+    app.register_blueprint(submitpost_routes, url_prefix="/submit_post")
 
     return app
 if __name__ == '__main__':
