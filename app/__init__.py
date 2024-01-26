@@ -5,6 +5,7 @@ from .config import Config
 from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
+from .routes.post_routes_copy import submitpost_routes
 from .middlewares import setup_middlewares
 
 
@@ -28,4 +29,10 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_routes)
     app.register_blueprint(user_routes, url_prefix="/user")
     app.register_blueprint(post_routes, url_prefix="/post")
+    app.register_blueprint(submitpost_routes, url_prefix="/submitpost")
+
     return app
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
+
