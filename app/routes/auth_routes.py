@@ -21,7 +21,7 @@ auth_routes = Blueprint("auth", __name__)
 @auth_routes.route("/login", methods=["GET"])
 def login():
     """Show login page."""
-    return render_template("login.html", showLogout=False, showLogin = True)
+    return render_template("login.html", showLogout=False)
 
 
 @auth_routes.route("/login", methods=["POST"])
@@ -34,7 +34,7 @@ def login_post():
             "success"
         ] = f'Authenticated as {user.name} click to <a href="/logout">logout</a>.'
         token = create_access_token(identity={"user": {"id": user.id}})
-        resp = make_response(redirect(url_for("user.user_posts", author_id=user.id)))
+        resp = make_response(redirect(url_for("user.user_posts", author_id=user.id, showLogout = True)))
         resp.set_cookie("access_token", token, httponly=True, max_age=60 * 60)
         return resp
     session["error"] = "Authentication failed, please check your email and password."
@@ -68,3 +68,4 @@ def register_post():
     register_user(request.form["name"], email, request.form["password"])
     session["error"] = "Registration Successful, please login."
     return redirect("/login")
+
