@@ -20,12 +20,18 @@ def create_app(config_class=Config):
     def index():
         return render_template("landing.html")
 
-    @app.route("/write", methods=["GET"])
-    def landing():
-        return render_template("write.html")
+
+    # @app.route("/write", methods=["GET"])
+    # def landing():
+    #     return render_template("write.html")
 
     # Registering blueprints from your routes modules
     app.register_blueprint(auth_routes)
     app.register_blueprint(user_routes, url_prefix="/user")
-    app.register_blueprint(post_routes, url_prefix="/post")
+    app.register_blueprint(post_routes, url_prefix="/")
+
     return app
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
+
