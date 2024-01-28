@@ -24,7 +24,7 @@
               style="width: 180px; padding-left: 60px"
               alt="The InKVue Logo"></a>
           <h6 class="text-muted fs-6" style="font-style: italic">
-            Draft in Princewill Onyekah
+            Draft in {{author.name}}
           </h6>
           <!-- The name would need a placeholder to be taken from the database-->
         </div>
@@ -81,6 +81,9 @@
         <button class="btn btn-outline-success mt-3" type="submit">
           Publish
         </button>
+         <!-- Author -->
+         <input type="hidden" name="authorEmail" value="{{ author.email }}">
+         <input type="hidden" name="authorId" value="{{ author.id }}">
 
       </form>
     </div>
