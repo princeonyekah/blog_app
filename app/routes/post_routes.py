@@ -1,5 +1,5 @@
 """Post routes"""
-from flask import Blueprint, request, redirect, abort,render_template
+from flask import Blueprint, request, redirect, abort,render_template,url_for
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
@@ -37,7 +37,6 @@ def create_post():
 
 @post_routes.route("/post/<int:author_id>", methods=["GET"])
 def create_post_now(author_id):
-    author = prisma.user.find_unique(where={"id": author_id})
 
     if authorize(author_id, request.cookies.get("access_token")):
         author = prisma.user.find_unique(where={"id": author_id})
@@ -49,6 +48,22 @@ def create_post_now(author_id):
         return "User not found", 404
     abort(403)
 
-@post_routes.route("/submit_post", methods=["POST"])
+@post_routes.route("/blogs", methods=["GET"])
+def view_submitted():
+    author = prisma.user.find_many()
+
+    if  request.cookies.get("access_token"):
+            posts = prisma.post.find_many()
+            print(posts)
+            return render_template(
+                "posts.html", showLogout=True, author=author, posts=posts
+            )
+    else:
+        return render_template(
+            "register.html"
+        )
+
+@post_routes.route("/blogs", methods=["GET"])
 def submit():
-    return redirect("/")
+    return redirect(url_for(".view_submitted"), author_id = None)
+
