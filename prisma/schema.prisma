@@ -16,6 +16,7 @@ model User {
   name  String?
   posts Post[]
   blogpost BlogPost[]
+  blogs Blogs[]
 }
 
 model Post {
@@ -38,3 +39,13 @@ model BlogPost{
   author User? @relation(fields: [authorId], references: [id])
   authorId Int?
   }
+
+model Blogs {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  title String
+  content String?
+  published Boolean @default(false)
+  author User? @relation(fields: [authorId], references: [id])
+  authorId Int?
+}

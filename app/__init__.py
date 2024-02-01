@@ -18,7 +18,27 @@ def create_app(config_class=Config):
     # Defining routes
     @app.route("/", methods=["GET"])
     def index():
-        return render_template("landing.html")
+        #Get the blog data from the database
+        #Pass the data to the template
+        #Render the template
+        blogs = [
+            {
+                "title": "Blog 1",
+                "content": "This is the content of blog 1",
+                "author": "Author 1",
+            },
+            {
+                "title": "Blog 2",
+                "content": "This is the content of blog 2",
+                "author": "Author 2",
+            },
+            {
+                "title": "Blog 3",
+                "content": "This is the content of blog 3",
+                "author": "Author 3",
+            },
+        ]
+        return render_template("landing.html", blogs=blogs)
 
 
     # @app.route("/write", methods=["GET"])
