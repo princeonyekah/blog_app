@@ -38,7 +38,7 @@ def create_app(config_class=Config):
                 "author": "Author 3",
             },
         ]
-        return render_template("landing.html", blogs=blogs)
+        return render_template("landing.html", blogs=blogs, signIn = True)
 
 
     # @app.route("/write", methods=["GET"])
