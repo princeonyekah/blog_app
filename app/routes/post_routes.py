@@ -4,10 +4,30 @@ from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
 from flask_jwt_extended import JWTManager
+import jwt
+from os import environ
+
+SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 
 prisma = Config.PRISMA
 
 post_routes = Blueprint("post", __name__)
+
+def get_author_id_from_token():
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        try:
+            # Decode the access token to extract author_id
+            payload = jwt.decode(access_token, SECRET_KEY, algorithms=['HS256'])
+            return payload.get('sub', {}).get('user', {}).get('id')
+        except jwt.ExpiredSignatureError:
+            # Handle expired token error
+            return None
+        except jwt.InvalidTokenError:
+            # Handle invalid token error
+            return None
+    return None
+
 
 @post_routes.route("/post", methods=["POST"])
 def create_post():
@@ -16,7 +36,6 @@ def create_post():
     content = request.form.get("content")
     author_email = request.form.get("authorEmail")
     author_id = request.form.get("authorId")
-    print("author_id: ", author_id)
     if not title or not content or not author_email or not author_id:
         print("Missing required fields")
         abort(400)
@@ -51,8 +70,10 @@ def create_post_now(author_id):
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
+    author_id = get_author_id_from_token()
 
     if  request.cookies.get("access_token"):
+            author = prisma.user.find_unique(where={"id": author_id})
             posts = prisma.post.find_many()
             print(posts)
             return render_template(
@@ -69,3 +90,4 @@ def submit():
 @post_routes.route("/explore", methods=["GET"])
 def explore():
     return render_template("blog.html")
+
