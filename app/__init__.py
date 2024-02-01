@@ -6,6 +6,7 @@ from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
+from prisma_client import PrismaClient
 import os
 
 
@@ -17,8 +18,21 @@ def create_app(config_class=Config):
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+    app.config.from_object(config_class)
     JWTManager(app)
     setup_middlewares(app)
+
+    prisma = PrismaClient()
+
+    #Using the PrismaClient instance to connect to the database
+    @app.before_request
+    def before_request():
+        prisma.connect()
+
+    @app.teardown_request
+    def teardown_request():
+        prisma.disconnect()
+
 
     # Defining routes
     @app.route("/", methods=["GET"])
@@ -26,23 +40,7 @@ def create_app(config_class=Config):
         #Get the blog data from the database
         #Pass the data to the template
         #Render the template
-        blogs = [
-            {
-                "title": "Blog 1",
-                "content": "This is the content of blog 1",
-                "author": "Author 1",
-            },
-            {
-                "title": "Blog 2",
-                "content": "This is the content of blog 2",
-                "author": "Author 2",
-            },
-            {
-                "title": "Blog 3",
-                "content": "This is the content of blog 3",
-                "author": "Author 3",
-            },
-        ]
+        blogs = prisma.blogs.find_many()
         return render_template("landing.html", blogs=blogs, signIn = True)
 
 
@@ -60,4 +58,3 @@ def create_app(config_class=Config):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)
-
