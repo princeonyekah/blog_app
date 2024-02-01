@@ -56,14 +56,16 @@ def view_submitted():
             posts = prisma.post.find_many()
             print(posts)
             return render_template(
-                "posts.html", showLogout=True, author=author, posts=posts
-            )
+                "posts.html", showLogout=True, author=author, posts=posts,)
     else:
         return render_template(
-            "register.html"
+            "register.html", signIn = True
         )
 
 @post_routes.route("/blogs", methods=["GET"])
 def submit():
     return redirect(url_for(".view_submitted"), author_id = None)
 
+@post_routes.route("/explore", methods=["GET"])
+def explore():
+    return render_template("blog.html")
