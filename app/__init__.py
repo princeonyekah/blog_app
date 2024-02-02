@@ -6,14 +6,26 @@ from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
+<<<<<<< HEAD
 from prisma_client import PrismaClient
 
+=======
+from werkzeug.utils import secure_filename
+>>>>>>> 96b5dec65dc04e1c4134a9fea6bde80bec28dc1e
 
 def create_app(config_class=Config):
     """Create the Flask app instance"""
     app = Flask(__name__)
     app.config["JWT_SECRET_KEY"] = config_class.SECRET_KEY
+<<<<<<< HEAD
     app.config.from_object(config_class)
+=======
+    UPLOAD_FOLDER = '/static/uploads'
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+>>>>>>> 96b5dec65dc04e1c4134a9fea6bde80bec28dc1e
     JWTManager(app)
     setup_middlewares(app)
 
