@@ -7,13 +7,12 @@ from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
 from prisma_client import PrismaClient
-import os
-
 
 
 def create_app(config_class=Config):
     """Create the Flask app instance"""
     app = Flask(__name__)
+    app.config["JWT_SECRET_KEY"] = config_class.SECRET_KEY
     UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
