@@ -6,40 +6,19 @@ from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
-<<<<<<< HEAD
-from prisma_client import PrismaClient
-
-=======
 from werkzeug.utils import secure_filename
->>>>>>> 96b5dec65dc04e1c4134a9fea6bde80bec28dc1e
 
 def create_app(config_class=Config):
     """Create the Flask app instance"""
     app = Flask(__name__)
     app.config["JWT_SECRET_KEY"] = config_class.SECRET_KEY
-<<<<<<< HEAD
-    app.config.from_object(config_class)
-=======
     UPLOAD_FOLDER = '/static/uploads'
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
->>>>>>> 96b5dec65dc04e1c4134a9fea6bde80bec28dc1e
     JWTManager(app)
     setup_middlewares(app)
-
-    prisma = PrismaClient()
-
-    #Using the PrismaClient instance to connect to the database
-    @app.before_request
-    def before_request():
-        prisma.connect()
-
-    @app.teardown_request
-    def teardown_request():
-        prisma.disconnect()
-
 
     # Defining routes
     @app.route("/", methods=["GET"])
@@ -47,7 +26,23 @@ def create_app(config_class=Config):
         #Get the blog data from the database
         #Pass the data to the template
         #Render the template
-        blogs = prisma.blogs.find_many()
+        blogs = [
+            {
+                "title": "Blog 1",
+                "content": "This is the content of blog 1",
+                "author": "Author 1",
+            },
+            {
+                "title": "Blog 2",
+                "content": "This is the content of blog 2",
+                "author": "Author 2",
+            },
+            {
+                "title": "Blog 3",
+                "content": "This is the content of blog 3",
+                "author": "Author 3",
+            },
+        ]
         return render_template("landing.html", blogs=blogs, signIn = True)
 
 
@@ -64,3 +59,4 @@ def create_app(config_class=Config):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)
+
