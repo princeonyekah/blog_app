@@ -88,21 +88,17 @@ def create_post_now(author_id):
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
-    author_id = get_author_id_from_token()
     try:
-        if  request.cookies.get("access_token"):
-                author = prisma.user.find_unique(where={"id": author_id})
-                posts = prisma.post.find_many()
-                return render_template(
-                    "posts.html", showLogout=True, author=author, posts=posts,)
+        author_id = get_author_id_from_token()
+
+        if request.cookies.get("access_token"):
+            author = prisma.user.find_unique(where={"id": author_id})
+            posts = prisma.post.find_many()
+            return render_template("all_post.html", showLogout=True, author=author, posts=posts)
+        else:
+            return render_template("register.html", signIn=True)
     except:
-        return render_template(
-         "register.html", signIn = True
-           )
-    
-@post_routes.route("/blogs", methods=["GET"])
-def submit():
-    return redirect(url_for(".view_submitted"), author_id = None)
+        return "User not found", 404
 
 @post_routes.route("/explore", methods=["GET"])
 def explore():
