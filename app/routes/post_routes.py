@@ -1,15 +1,18 @@
 """Post routes"""
-from flask import Blueprint, request, redirect, abort,render_template,url_for
+from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 import jwt
 from os import environ
+from werkzeug.utils import secure_filename
+import os
+from flask import current_app as app
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
-
 prisma = Config.PRISMA
+
 
 post_routes = Blueprint("post", __name__)
 
@@ -36,18 +39,27 @@ def create_post():
     content = request.form.get("content")
     author_email = request.form.get("authorEmail")
     author_id = request.form.get("authorId")
+
+     # Handle file upload
     if not title or not content or not author_email or not author_id:
         print("Missing required fields")
         abort(400)
     elif authorize(author_id, request.cookies.get("access_token")):
         print("Creating post")
-        prisma.post.create(
+        image_file = request.files['image']
+        image_filename = secure_filename(image_file.filename)
+        new_post = prisma.post.create(
             data={
                 "title": title,
                 "content": content,
                 "author": {"connect": {"email": author_email}},
+                "imageFilename": image_filename  # Optionally, save image filename
             }
         )
+
+        # Save the file to a directory or database
+        image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+
         return redirect(f"/user/{author_id}/posts")
     else:
         print("Unauthorized")
@@ -75,7 +87,6 @@ def view_submitted():
     if  request.cookies.get("access_token"):
             author = prisma.user.find_unique(where={"id": author_id})
             posts = prisma.post.find_many()
-            print(posts)
             return render_template(
                 "posts.html", showLogout=True, author=author, posts=posts,)
     else:

@@ -6,16 +6,14 @@ from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
-from werkzeug.utils import secure_filename
+
+
 
 def create_app(config_class=Config):
     """Create the Flask app instance"""
     app = Flask(__name__)
-    app.config["JWT_SECRET_KEY"] = config_class.SECRET_KEY
-    UPLOAD_FOLDER = '/static/uploads'
+    app.config['UPLOAD_FOLDER'] = r'C:\Users\Princewill Onyekah\Kibo\Team Software Project\blog_app\app\static\uploads'
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
     JWTManager(app)
     setup_middlewares(app)
@@ -54,6 +52,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_routes)
     app.register_blueprint(user_routes, url_prefix="/user")
     app.register_blueprint(post_routes, url_prefix="/")
+
 
     return app
 if __name__ == '__main__':
