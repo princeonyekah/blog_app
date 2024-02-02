@@ -1,4 +1,5 @@
 """Routes for authentication."""
+from os import environ
 from flask import (
     Blueprint,
     request,
@@ -9,11 +10,13 @@ from flask import (
     url_for,
 )
 from flask_jwt_extended import create_access_token
-
+import jwt
 from app.utils.auth import authenticate, register_user
 from app.config import Config
 
 prisma = Config.PRISMA
+
+SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 
 auth_routes = Blueprint("auth", __name__)
 
@@ -21,7 +24,26 @@ auth_routes = Blueprint("auth", __name__)
 @auth_routes.route("/login", methods=["GET"])
 def login():
     """Show login page."""
-    return render_template("login.html", showLogout=False)
+    access_token = request.cookies.get("access_token")
+    try:
+        if access_token:
+            # Decode the access token to extract author_id
+            payload = jwt.decode(access_token, SECRET_KEY, algorithms=['HS256'])
+            author_id = payload.get('sub', {}).get('user', {}).get('id')
+            author = prisma.user.find_unique(where={"id": author_id})
+            posts = prisma.post.find_many(where={"authorId": author_id})
+            return render_template(
+                    "posts.html", showLogout=True, author=author, posts=posts
+                )
+        else:
+            return render_template("login.html", signIn = True, showLogout=False)
+    except jwt.ExpiredSignatureError:
+        # Handle expired token error
+        return render_template("login.html", signIn=True, showLogout=False, error="Token expired.")
+    except jwt.InvalidTokenError:
+        # Handle invalid token error
+        return render_template("login.html", signIn=True, showLogout=False, error="Invalid token.")
+
 
 
 @auth_routes.route("/login", methods=["POST"])
@@ -35,7 +57,7 @@ def login_post():
         ] = f'Authenticated as {user.name} click to <a href="/logout">logout</a>.'
         token = create_access_token(identity={"user": {"id": user.id}})
         resp = make_response(redirect(url_for("user.user_posts", author_id=user.id, showLogout = True)))
-        resp.set_cookie("access_token", token, httponly=True, max_age=60 * 60)
+        resp.set_cookie("access_token", token, httponly=True, max_age=86400)
         return resp
     session["error"] = "Authentication failed, please check your email and password."
     return redirect("/login")
