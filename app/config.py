@@ -17,7 +17,8 @@ class Config:
     SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 
     # Other configurations
-    # ...
+
+  
 
 
 # Initialize Prisma client

@@ -64,7 +64,7 @@
     <div class="container mt-4">
       <h1 class="mb-4">Write your Blog Post</h1>
 
-      <form action="/post" method="POST">
+      <form action="/post" method="POST" enctype="multipart/form-data">
         <label for="title" class="form-label">Title</label>
         <input
           type="text"
@@ -90,7 +90,7 @@
           <div class="input-group">
               <span class="input-group-btn">
               <span class="btn btn-primary btn-file">
-                  Browse… <input type="file" id="fileupload" name="file" multiple>
+                  Browse… <input type="file" id="fileupload" name="image" multiple>
               </span>
               </span>
               <input type="text" class="form-control" readonly>
