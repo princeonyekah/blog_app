@@ -41,29 +41,35 @@ def create_post():
     author_id = request.form.get("authorId")
 
      # Handle file upload
-    if not title or not content or not author_email or not author_id:
-        print("Missing required fields")
-        abort(400)
-    elif authorize(author_id, request.cookies.get("access_token")):
-        print("Creating post")
-        image_file = request.files['image']
-        image_filename = secure_filename(image_file.filename)
-        new_post = prisma.post.create(
-            data={
-                "title": title,
-                "content": content,
-                "author": {"connect": {"email": author_email}},
-                "imageFilename": image_filename  # Optionally, save image filename
-            }
-        )
+    try:
+        if not title or not content or not author_email or not author_id:
+            print("Missing required fields")
+            abort(400)
+        elif authorize(author_id, request.cookies.get("access_token")):
+            print("Creating post")
+            image_file = request.files['image']
+            image_filename = secure_filename(image_file.filename)
+            new_post = prisma.post.create(
+                data={
+                    "title": title,
+                    "content": content,
+                    "author": {"connect": {"email": author_email}},
+                    "imageFilename": image_filename  # Optionally, save image filename
+                }
+            )
 
-        # Save the file to a directory or database
-        image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+            # Save the file to a directory or database
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
-        return redirect(f"/user/{author_id}/posts")
-    else:
-        print("Unauthorized")
-        abort(403)
+            return redirect(f"/user/{author_id}/posts")
+        else:
+            print("Unauthorized")
+            abort(403)
+    except:
+        return render_template(
+                "login.html", signIn = True
+            )
+
 
 
 @post_routes.route("/post/<int:author_id>", methods=["GET"])
@@ -83,17 +89,17 @@ def create_post_now(author_id):
 def view_submitted():
     author = prisma.user.find_many()
     author_id = get_author_id_from_token()
-
-    if  request.cookies.get("access_token"):
-            author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many()
-            return render_template(
-                "posts.html", showLogout=True, author=author, posts=posts,)
-    else:
+    try:
+        if  request.cookies.get("access_token"):
+                author = prisma.user.find_unique(where={"id": author_id})
+                posts = prisma.post.find_many()
+                return render_template(
+                    "posts.html", showLogout=True, author=author, posts=posts,)
+    except:
         return render_template(
-            "register.html", signIn = True
-        )
-
+         "register.html", signIn = True
+           )
+    
 @post_routes.route("/blogs", methods=["GET"])
 def submit():
     return redirect(url_for(".view_submitted"), author_id = None)
