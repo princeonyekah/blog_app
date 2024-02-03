@@ -104,3 +104,60 @@ def view_submitted():
 def explore():
     return render_template("blog.html")
 
+# ---Edit Post---
+
+@post_routes.route("/edit/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    # """Edit an existing post"""
+    # author_id = get_author_id_from_token()
+    # if not author_id:
+    #     abort(403)  # User is not authorized
+
+    # post = prisma.post.find_unique(where={"id": post_id})
+    # if not post:
+    #     abort(404)  # Post not found
+
+    # if post.authorId != author_id:
+    #     abort(403)  # User is not the author of the post
+
+    # if request.method == "POST":
+    #     title = request.form.get("title")
+    #     content = request.form.get("content")
+    #     # Update the post in the database
+    #     prisma.post.update(
+    #         where={"id": post_id},
+    #         data={"title": title, "content": content}
+    #     )
+    #     return redirect(url_for("post.create_post_now", author_id=post.authorId)
+    # Check if the user is authorized to edit posts
+    author_id = get_author_id_from_token()
+    author = prisma.user.find_unique(where={"id": author_id})
+    if not author_id:
+        abort(403)  # User is not authorized
+
+    # Fetch the existing post from the database
+    post = prisma.post.find_unique(where={"id": post_id})
+    print(post)
+    if not post:
+        abort(404)  # Post not found
+
+    # Check if the current user is the author of the post
+    if post.authorId != author_id:
+        abort(403)  # User is not the author of the post
+
+    if request.method == "POST":
+        # Process the form submission to update the post
+        title = request.form.get("title")
+        content = request.form.get("content")
+        # Update the post in the database
+        prisma.post.update(
+            where={"id": post_id},
+            data={"title": title, "content": content}
+        )
+        # Redirect to the page displaying all posts by the author
+        return redirect(url_for("post.create_post_now", author_id=post.authorId))
+
+    # Render the edit form with pre-filled data
+    return render_template("edit_post.html", post=post, author=author, showLogout=True)
+
+
