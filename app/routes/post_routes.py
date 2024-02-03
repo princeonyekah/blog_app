@@ -42,7 +42,7 @@ def create_post():
 
      # Handle file upload
     try:
-        if not title or not content or not author_email or not author_id:
+        if not title or not content or not author_email or not author_id :
             print("Missing required fields")
             abort(400)
         elif authorize(author_id, request.cookies.get("access_token")):
@@ -54,10 +54,10 @@ def create_post():
                     "title": title,
                     "content": content,
                     "author": {"connect": {"email": author_email}},
-                    "imageFilename": image_filename  # Optionally, save image filename
+                    "imageFilename": image_filename
                 }
             )
-
+            print(new_post)
             # Save the file to a directory or database
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
