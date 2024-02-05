@@ -53,19 +53,5 @@
             <button type="submit" class="search-btn">Search</button>
         </div>
 
-        <div class="row mt-3">
-            {% for blog in blogs %}
-            <div class="col-md-4 mb-4">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ blog.title }}</h5>
-                  <p class="card-text">by {{ blog.author }}</p>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-    </div>
-
 </body>
 </html>

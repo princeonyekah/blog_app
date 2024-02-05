@@ -36,11 +36,7 @@ def create_app(config_class=Config):
     # Defining routes
     @app.route("/", methods=["GET"])
     def index():
-        #Get the blog data from the database
-        #Pass the data to the template
-        #Render the template
-        blogs = prisma.blogs.find_many()
-        return render_template("landing.html", blogs=blogs, signIn = True)
+        return render_template("landing.html", signIn = True)
 
 
     # @app.route("/write", methods=["GET"])

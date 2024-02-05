@@ -1,4 +1,5 @@
 
+
 def login():
     """Show login page."""
     access_token = request.cookies.get("access_token")

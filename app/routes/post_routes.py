@@ -89,5 +89,4 @@ def submit():
 
 @post_routes.route("/explore", methods=["GET"])
 def explore():
-    return render_template("blog.html")
-
+    return render_template("get_started.html")
