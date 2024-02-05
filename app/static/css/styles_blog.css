@@ -7,13 +7,13 @@
 
 .header{
     width: 100%;
-    height: 100vh;
+    height: 75vh;
     background: #fff;
 }
 
 .side-nav{
     width: 250px;
-    height: 100%;
+    height: 70%;
     background: #D9D9D9;
     top: 0;
     left: 0;
@@ -129,7 +129,7 @@
 }
 
 .user-icon {
-    font-size: 24px;
+    font-size: 35px;
     color: #000;
     position: fixed;
     top: 10px;
