@@ -65,10 +65,8 @@ def create_post():
         else:
             print("Unauthorized")
             abort(403)
-    except:
-        return render_template(
-                "login.html", signIn = True
-            )
+    except Exception as e:
+        return render_template("login.html", signIn = True, error = str(e))
 
 
 
@@ -104,14 +102,13 @@ def view_submitted():
 def explore():
     return render_template("get_started.html")
 
-<<<<<<< HEAD
 # Shows alll the post on all_blogs.html
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
     posts = prisma.post.find_many()
     print(posts)
     return render_template("all_blogs.html", posts=posts)
-=======
+
 # ---Edit Post---
 
 @post_routes.route("/edit/<int:post_id>", methods=["GET", "POST"])
@@ -167,6 +164,3 @@ def edit_post(post_id):
 
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, showLogout=True)
-
-
->>>>>>> 0239a23c2a10fa3514f16a1092bc63db9b89b686
