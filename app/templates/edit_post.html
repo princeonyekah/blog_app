@@ -71,6 +71,7 @@
           class="form-control"
           id="title"
           name="title"
+          value="{{ post.title }}"
           required
         >
 
@@ -81,8 +82,9 @@
           id="content"
           name="content"
           rows="8"
+        
           required
-        ></textarea>
+        > {{ post.content }}</textarea>
 
         <div class="form-group">
           <label for="txtPost">Add Image</label>
@@ -90,7 +92,7 @@
           <div class="input-group">
               <span class="input-group-btn">
               <span class="btn btn-primary btn-file">
-                  Browse… <input type="file" id="fileupload" name="image" required multiple>
+                  Browse… <input type="file" id="fileupload" name="image" multiple>
               </span>
               </span>
               <input type="text" class="form-control" readonly>

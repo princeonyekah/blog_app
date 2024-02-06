@@ -18,8 +18,12 @@ class Config:
 
     # Other configurations
 
+<<<<<<< HEAD
     # Database configuration
     DATABASE_URL = environ.get("DATABASE_URL", "postgresql://username:password@localhost:5432/dev")
+=======
+  
+>>>>>>> 0239a23c2a10fa3514f16a1092bc63db9b89b686
 
 
 # Initialize Prisma client

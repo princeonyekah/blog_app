@@ -10,12 +10,12 @@
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
         {% if signIn %}
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/login">Sign in</a>
+          <a class=  "nav-link active  text-dark fs-4 fw-bolder"  aria-current="page"   href="/login"    >Sign in</a>
         </li>
         {% endif %}
           </ul>
           <a href="/blogs">
-            <button class="btn btn-outline-success" type="submit">Get Started</button>
+            <button class="btn btn-secondary btn-lg fs-4  text-white badge rounded-pill bg-dark" type="submit">Get Started</button>
           </a>
 
 
@@ -24,6 +24,11 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/post/{{author.id}}">Write</a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/login"> My Blogs </a>
+        </li>
+
 
         <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
