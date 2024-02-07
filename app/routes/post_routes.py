@@ -1,18 +1,15 @@
 """Post routes"""
-from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
+from flask import Blueprint, request, redirect, abort,render_template,url_for
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 import jwt
 from os import environ
-from werkzeug.utils import secure_filename
-import os
-from flask import current_app as app
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
-prisma = Config.PRISMA
 
+prisma = Config.PRISMA
 
 post_routes = Blueprint("post", __name__)
 
@@ -65,10 +62,8 @@ def create_post():
         else:
             print("Unauthorized")
             abort(403)
-    except:
-        return render_template(
-                "login.html", signIn = True
-            )
+    except Exception as e:
+        return render_template("login.html", signIn = True, error = str(e))
 
 
 
@@ -88,21 +83,33 @@ def create_post_now(author_id):
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
-    try:
-        author_id = get_author_id_from_token()
+    author_id = get_author_id_from_token()
 
-        if request.cookies.get("access_token"):
+    if  request.cookies.get("access_token"):
             author = prisma.user.find_unique(where={"id": author_id})
             posts = prisma.post.find_many()
-            return render_template("all_post.html", showLogout=True, author=author, posts=posts)
-        else:
-            return render_template("register.html", signIn=True)
-    except:
-        return "User not found", 404
+            print(posts)
+            return render_template(
+                "posts.html", showLogout=True, author=author, posts=posts,)
+    else:
+        return render_template(
+            "register.html", signIn = True
+        )
+
+@post_routes.route("/blogs", methods=["GET"])
+def submit():
+    return redirect(url_for(".view_submitted"), author_id = None)
 
 @post_routes.route("/explore", methods=["GET"])
 def explore():
-    return render_template("blog.html")
+    return render_template("get_started.html")
+
+# Shows alll the post on all_blogs.html
+@post_routes.route("/all_blogs", methods=["GET"])
+def all_blogs():
+    posts = prisma.post.find_many()
+    print(posts)
+    return render_template("all_blogs.html", posts=posts)
 
 # ---Edit Post---
 
@@ -159,5 +166,3 @@ def edit_post(post_id):
 
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, showLogout=True)
-
-
