@@ -1,62 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/styles_blog.css">
-    <script src="https://kit.fontawesome.com/38269b1820.js" crossorigin="anonymous"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../static/css/styles_blog.css" />
+    <script
+      src="https://kit.fontawesome.com/38269b1820.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Document</title>
-</head>
-<body>
-
-    <div class="nav-container">
-        <div class="logo">
-            <a href="/" class="logo">
-                <img src="../static/InKVue.png" class="logo-img" alt="The InKVue Logo">
-            </a>
-        </div>
-        <div class="user-icon">
-            <a href="#"><i class="fa-solid fa-user"></i></a>
-        </div>
-    </div>
-
+  </head>
+  <body>
+    {% include "navigation.html" %}
 
     <div class="header-container">
-        <div class="side-nav">
-            <ul class="nav-links">
-                <li>
-                    <a href="/all_blogs"> <i class="fa-solid fa-book-open"></i><p> All Blogs </p></a>
-                </li>
-                <li>
-                    <a href="#my-blogs"><i class="fa-solid fa-book-open-reader"></i> <p> My Blogs  </p></a>
-                </li>
-                <li>
-                    <a href="#explore"><i class="fa-regular fa-compass"></i> <p> Explore </p></a>
-                </li>
-                <li>
-                    <a href="#subscriptions"> <i class="fa-solid fa-credit-card"></i><p> Subscriptions </p></a>
-                </li>
-                <li>
-                    <a href="#learn"><i class="fa-solid fa-chalkboard"></i><p> Learn </p></a>
-                </li>
-                <li>
-                    <a href="#user-profile"><i class="fa-solid fa-user"></i><p> User Profile </p></a>
-                </li>
-                <div class="active">
+      <div class="side-nav">
+        <ul class="nav-links">
+          <li>
+            <a href="/all_blogs">
+              <i class="fa-solid fa-book-open"></i>
+              <p>All Blogs</p></a
+            >
+          </li>
+          <li>
+            <a href="#my-blogs"
+              ><i class="fa-solid fa-book-open-reader"></i>
+              <p>My Blogs</p></a
+            >
+          </li>
+          <li>
+            <a href="#explore"
+              ><i class="fa-regular fa-compass"></i>
+              <p>Explore</p></a
+            >
+          </li>
+          <li>
+            <a href="#subscriptions">
+              <i class="fa-solid fa-credit-card"></i>
+              <p>Subscriptions</p></a
+            >
+          </li>
+          <li>
+            <a href="#learn"
+              ><i class="fa-solid fa-chalkboard"></i>
+              <p>Learn</p></a
+            >
+          </li>
+          <li>
+            <a href="#user-profile"
+              ><i class="fa-solid fa-user"></i>
+              <p>User Profile</p></a
+            >
+          </li>
+          <div class="active"></div>
+        </ul>
+      </div>
+
+      <!-- Blog Post Cards -->
+      <div class="blog-container">
+        <div class="row">
+          {% for post in posts %}
+          <div class="col-md-3">
+              <div class="card" style="width: 18rem">
+                  <img class="card-img-top" src= "/static/uploads/{{post.imageFilename }}" alt="Card image cap">
+                  <div class="card-body">
+                      <h5 class="card-title">{{ post.title }}</h5>
+                      <p class="card-text">{{ post.content }}</p>
+                      <a href="#" class="btn btn-outline-primary rounded-0 float-end">Read more</a>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+
+      <div class="container">
+        <div class="text-center my-5">
+          <h1>Bootstrap 5 blog Post Grid Layout</h1>
+          <hr />
+            <!-- Row Start -->
+            <div class="row">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card mb-5 shadow-sm">
+              <img src="/static/uploads/download_36.jpeg" class="img-fluid" alt="New">
+              <div class="card-body">
+                <div class="card-title">
+                  <h2> This is the post title</h2>
                 </div>
-            </ul>
-        </div>
+                  <div class="card-text">
+                    <p>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum esse aperiam, ratione autem veritatis cumque delectus blanditiis doloribus, suscipit nemo sunt labore placeat! Ipsa culpa accusantium nisi incidunt maiores architecto.
+                    </p>
+                  </div>
+                  <a href="#" class="btn btn-outline-primary rounded-0 float-end"> Read More</a>
+              </div>
 
-    </div>
+                </div>
+              </div>
 
-    <div class="main-container">
-        <div class="search-container"
-            <div class="search-bar">
-                <input type="text" placeholder="Search for blogs" class="search-input">
-                <button type="submit" class="search-btn">Search</button>
+
+              <!-- Row End -->
             </div>
         </div>
-    </div>
+      </div>
+      </div>
 
-</body>
+    <!-- <div class="main-container">
+      <div class="search-container">
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search for blogs"
+            class="search-input"
+          />
+          <button type="submit" class="search-btn">Search</button>
+        </div>
+      </div>
+    </div> -->
+  </body>
 </html>

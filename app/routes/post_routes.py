@@ -107,7 +107,9 @@ def submit():
 
 @post_routes.route("/explore", methods=["GET"])
 def explore():
-    return render_template("blog.html")
+    posts = prisma.post.find_many()
+
+    return render_template("get_started.html", posts = posts)
 
 
 # Shows alll the post on all_blogs.html
