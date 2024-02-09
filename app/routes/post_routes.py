@@ -6,6 +6,7 @@ from flask import jsonify
 from flask_jwt_extended import JWTManager
 import jwt
 from os import environ
+from werkzeug.utils import secure_filename
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 
