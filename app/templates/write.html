@@ -13,10 +13,27 @@
           <input type="text" class="form-control" id="title" name="title" required>
         </div>
 
-        <div class="mb-3">
-          <label for="content" class="form-label">Content</label>
-          <textarea class="form-control" id="content" name="content" rows="8" required></textarea>
-        </div>
+        <!-- <div class="mb-3"> -->
+        <label for="content" class="form-label">Content</label>
+        <textarea
+          class="form-control"
+          id="content"
+          name="content"
+          rows="8"
+          required
+        ></textarea>
+
+        <div class="form-group">
+          <label for="txtPost">Add Image</label>
+
+          <div class="input-group">
+              <span class="input-group-btn">
+              <span class="btn btn-primary btn-file">
+                  Browse… <input type="file" id="fileupload" name="file" multiple required>
+              </span>
+              </span>
+              <input type="text" class="form-control" readonly>
+          </div>
 
         <div class="mb-3">
           <label for="image" class="form-label">Add Image</label>
