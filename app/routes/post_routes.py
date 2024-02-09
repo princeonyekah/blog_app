@@ -1,5 +1,6 @@
 """Post routes"""
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
+from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
@@ -7,6 +8,8 @@ from flask_jwt_extended import JWTManager
 import jwt
 from os import environ
 from werkzeug.utils import secure_filename
+import os
+from flask import current_app as app
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 prisma = Config.PRISMA
@@ -104,6 +107,16 @@ def view_submitted():
          "register.html", signIn = True
            )
 
+@post_routes.route("/blogs", methods=["GET"])
+def submit():
+    return redirect(url_for(".view_submitted"), author_id = None)
+
+@post_routes.route("/explore", methods=["GET"])
+def explore():
+    return render_template("blog.html")
+
+
+# Shows alll the post on all_blogs.html
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
     posts = prisma.post.find_many(order = {"createdAt": "desc"})
