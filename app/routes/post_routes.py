@@ -31,45 +31,6 @@ def get_author_id_from_token():
             return None
     return None
 
-
-@post_routes.route("/post", methods=["POST"])
-def create_post():
-    """Create a new post"""
-    title = request.form.get("title")
-    content = request.form.get("content")
-    author_email = request.form.get("authorEmail")
-    author_id = request.form.get("authorId")
-
-     # Handle file upload
-    try:
-        if not title or not content or not author_email or not author_id :
-            print("Missing required fields")
-            abort(400)
-        elif authorize(author_id, request.cookies.get("access_token")):
-            print("Creating post")
-            image_file = request.files['image']
-            image_filename = secure_filename(image_file.filename)
-            new_post = prisma.post.create(
-                data={
-                    "title": title,
-                    "content": content,
-                    "author": {"connect": {"email": author_email}},
-                    "imageFilename": image_filename
-                }
-            )
-            print(new_post)
-            # Save the file to a directory or database
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-
-            return redirect(f"/user/{author_id}/posts")
-        else:
-            print("Unauthorized")
-            abort(403)
-    except Exception as e:
-        return render_template("login.html", signIn = True, error = str(e))
-
-
-
 @post_routes.route("/post/<int:author_id>", methods=["GET"])
 def create_post_now(author_id):
 
@@ -83,21 +44,78 @@ def create_post_now(author_id):
         return "User not found", 404
     abort(403)
 
+@post_routes.route("/post", methods=["POST"])
+def create_post():
+    """Create a new post"""
+    title = request.form.get("title")
+    content = request.form.get("content")
+    author_email = request.form.get("authorEmail")
+    author_id = request.form.get("authorId")
+
+     # Handle file upload
+    try:
+        if not title or not content or not author_email or not author_id:
+            print("Missing required fields")
+            abort(400)
+        elif authorize(author_id, request.cookies.get("access_token")):
+            print("Creating post")
+            image_file = request.files['image']
+            image_filename = secure_filename(image_file.filename)
+            new_post = prisma.post.create(
+                data={
+                    "title": title,
+                    "content": content,
+                    "author": {"connect": {"email": author_email}},
+                    "imageFilename": image_filename  # Optionally, save image filename
+                }
+            )
+
+            # Save the file to a directory or database
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+
+            return redirect(f"/user/{author_id}/posts")
+        else:
+            print("Unauthorized")
+            abort(403)
+    except Exception as e:
+        return render_template("login.html", signIn = True, error = str(e))
+
+
+
+
+
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
+    author_id = get_author_id_from_token()
     try:
-        author_id = get_author_id_from_token()
-
-        if request.cookies.get("access_token"):
-            author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many()
-            return render_template("all_post.html", showLogout=True, author=author, posts=posts)
+        if  request.cookies.get("access_token"):
+                author = prisma.user.find_unique(where={"id": author_id})
+                posts = prisma.post.find_many(where={"authorId": author_id},
+                                           order = {"createdAt": "desc"})
+                return render_template(
+                    "myblogs.html", showLogout=True, author=author, posts=posts,)
         else:
-            return render_template("register.html", signIn=True)
+             return render_template(
+         "login.html", signIn = True
+           )
     except:
-        return "User not found", 404
+        return render_template(
+         "register.html", signIn = True
+           )
 
+@post_routes.route("/all_blogs", methods=["GET"])
+def all_blogs():
+    posts = prisma.post.find_many(order = {"createdAt": "desc"})
+    return render_template("all_blogs.html", posts = posts)
+
+# Redirects on request for myblogs
+@post_routes.route("/myblogs", methods=["GET"])
+def myblogs():
+    return redirect(url_for('post.view_submitted'))
+
+
+<<<<<<< HEAD
 @post_routes.route("/explore", methods=["GET"])
 def explore():
     return render_template("get_started.html")
@@ -108,6 +126,8 @@ def all_blogs():
     posts = prisma.post.find_many()
     print(posts)
     return render_template("all_blogs.html", posts=posts)
+=======
+>>>>>>> c1a4de980e4ea83ecb11f616768cc94b78ecfc08
 
 # ---Edit Post---
 
