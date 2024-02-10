@@ -93,12 +93,13 @@ def view_submitted():
     try:
         if  request.cookies.get("access_token"):
                 author = prisma.user.find_unique(where={"id": author_id})
-                posts = prisma.post.find_many()
+                posts = prisma.post.find_many(where={"authorId": author_id},
+                                           order = {"createdAt": "desc"})
                 return render_template(
                     "myblogs.html", showLogout=True, author=author, posts=posts,)
         else:
              return render_template(
-         "register.html", signIn = True
+         "login.html", signIn = True
            )
     except:
         return render_template(
@@ -107,10 +108,10 @@ def view_submitted():
 
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
-    posts = prisma.post.find_many()
+    posts = prisma.post.find_many(order = {"createdAt": "desc"})
     return render_template("all_blogs.html", posts = posts)
 
-
+# Redirects on request for myblogs
 @post_routes.route("/myblogs", methods=["GET"])
 def myblogs():
     return redirect(url_for('post.view_submitted'))

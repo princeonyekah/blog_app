@@ -14,7 +14,8 @@ def user_posts(author_id):
     if authorize(author_id, request.cookies.get("access_token")):
         author = prisma.user.find_unique(where={"id": author_id})
         if author:
-            posts = prisma.post.find_many(where={"authorId": author_id})
+            posts = prisma.post.find_many(where={"authorId": author_id},
+                                           order = {"createdAt": "desc"})
             return render_template(
                 "myblogs.html", showLogout=True, author=author, posts=posts
             )
