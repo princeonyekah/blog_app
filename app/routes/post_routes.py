@@ -113,22 +113,6 @@ def all_blogs():
 @post_routes.route("/myblogs", methods=["GET"])
 def myblogs():
     return redirect(url_for('post.view_submitted'))
-
-
-<<<<<<< HEAD
-@post_routes.route("/explore", methods=["GET"])
-def explore():
-    return render_template("get_started.html")
-
-# Shows alll the post on all_blogs.html
-@post_routes.route("/all_blogs", methods=["GET"])
-def all_blogs():
-    posts = prisma.post.find_many()
-    print(posts)
-    return render_template("all_blogs.html", posts=posts)
-=======
->>>>>>> c1a4de980e4ea83ecb11f616768cc94b78ecfc08
-
 # ---Edit Post---
 
 @post_routes.route("/edit/<int:post_id>", methods=["GET", "POST"])
