@@ -1,5 +1,6 @@
 """Post routes"""
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
+from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
@@ -173,3 +174,13 @@ def edit_post(post_id):
 
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, showLogout=True)
+
+@post_routes.route("/blog/<int:post_id>", methods=["GET"])
+def view_post(post_id):
+    post = prisma.post.find_unique(where={"id": post_id})
+    if post:
+        return render_template("read_more.html", post=post)
+    abort(404)  
+
+
+

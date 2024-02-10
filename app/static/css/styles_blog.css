@@ -8,6 +8,7 @@
 .header-container{
     width: auto;
     display: flex;
+    display: flex;
     height: fit-content;
     background: #fff;
 }
