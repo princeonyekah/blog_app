@@ -39,8 +39,4 @@ def create_app(config_class=Config):
     return app
 if __name__ == '__main__':
     app = create_app()
-<<<<<<< HEAD
     app.run(debug=True)
-=======
-    app.run(debug=True) 
->>>>>>> c1a4de980e4ea83ecb11f616768cc94b78ecfc08
