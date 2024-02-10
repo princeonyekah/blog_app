@@ -100,7 +100,7 @@ def view_submitted():
                     "myblogs.html", showLogout=True, author=author, posts=posts,)
         else:
              return render_template(
-         "register.html", signIn = True
+         "login.html", signIn = True
            )
     except:
         return render_template(
