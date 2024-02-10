@@ -1,4 +1,4 @@
 set -o errexit
 pip install --upgrade pip
-pip install -r requirement.txt
+pip install -r requirements.txt
 prisma db push
