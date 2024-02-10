@@ -33,7 +33,7 @@ def login():
             author = prisma.user.find_unique(where={"id": author_id})
             posts = prisma.post.find_many(where={"authorId": author_id})
             return render_template(
-                    "posts.html", showLogout=True, author=author, posts=posts
+                    "myblogs.html", showLogout=True, author=author, posts=posts
                 )
         else:
             return render_template("login.html", signIn = True, showLogout=False)

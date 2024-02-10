@@ -1,5 +1,6 @@
 {% set title = 'Login' %}
 {% include "head.html" %}
+{% include "sidebar.html" %}
 <style>
   .custom-gradient {
     background: linear-gradient(90deg, #3ea20f 0%, #0dde22 100%);
@@ -27,9 +28,9 @@
 
           <button type="submit" class=" badge rounded-pill bg-success fw-bolder fs-6 d-grid gap-2 col-8 mx-auto btn btn-primary">Login</button>
 
-         <p class="text-end"><a class="text-decoration-none" href="/forgot_password"> Forgot Password? </a></p>
+         <!-- <p class="text-end"><a class="text-decoration-none" href="/forgot_password"> Forgot Password? </a></p> -->
         </div>
-        <p class="small text-muted">Don't have an account? <a href="/register">Create one> </a>
+        <p class="small text-muted">Don't have an account? <a href="/register">Create one </a>
       </form>
     </div>
   </div>
