@@ -95,29 +95,27 @@ def view_submitted():
                 author = prisma.user.find_unique(where={"id": author_id})
                 posts = prisma.post.find_many()
                 return render_template(
-                    "posts.html", showLogout=True, author=author, posts=posts,)
+                    "myblogs.html", showLogout=True, author=author, posts=posts,)
+        else:
+             return render_template(
+         "register.html", signIn = True
+           )
     except:
         return render_template(
          "register.html", signIn = True
            )
 
-@post_routes.route("/blogs", methods=["GET"])
-def submit():
-    return redirect(url_for(".view_submitted"), author_id = None)
-
-@post_routes.route("/explore", methods=["GET"])
-def explore():
-    posts = prisma.post.find_many()
-
-    return render_template("get_started.html", posts = posts)
-
-
-# Shows alll the post on all_blogs.html
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
     posts = prisma.post.find_many()
-    print(posts)
-    return render_template("all_blogs.html", posts=posts)
+    return render_template("all_blogs.html", posts = posts)
+
+
+@post_routes.route("/myblogs", methods=["GET"])
+def myblogs():
+    return redirect(url_for('post.view_submitted'))
+
+
 
 # ---Edit Post---
 
