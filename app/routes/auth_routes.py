@@ -18,6 +18,7 @@ prisma = Config.PRISMA
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 
+
 auth_routes = Blueprint("auth", __name__)
 
 

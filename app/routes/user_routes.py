@@ -21,18 +21,3 @@ def user_posts(author_id):
             )
         return "User not found", 404
     abort(403)
-
-
-
-# @user_routes.route("/<int:author_id>/blog")
-# def user_posts(author_id):
-#     """Show all posts from a user"""
-#     if authorize(author_id, request.cookies.get("access_token")):
-#         author = prisma.user.find_unique(where={"id": author_id})
-#         if author:
-#             posts = prisma.post.find_many(where={"authorId": author_id})
-#             return render_template(
-#                 "get_started.html", showLogout=True, author=author, posts=posts
-#             )
-#         return "User not found", 404
-#     abort(403)
