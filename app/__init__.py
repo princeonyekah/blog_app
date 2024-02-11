@@ -7,6 +7,7 @@ from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
 from .middlewares import setup_middlewares
 import os
+from datetime import timedelta
 
 
 
@@ -16,6 +17,8 @@ def create_app(config_class=Config):
     UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
     JWTManager(app)
     setup_middlewares(app)
