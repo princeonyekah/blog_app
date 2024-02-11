@@ -107,9 +107,12 @@ def view_submitted():
 def all_blogs():
     posts = prisma.post.find_many(order = {"createdAt": "desc"})
     if  request.cookies.get("access_token"):
-        author_id = get_author_id_from_token()
-        author = prisma.user.find_unique(where={"id": author_id})
-        return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
+        except:
+            return render_template("all_blogs.html", posts = posts)
     else:
         return render_template("all_blogs.html", posts = posts)
 
