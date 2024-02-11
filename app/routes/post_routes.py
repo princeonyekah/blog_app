@@ -1,5 +1,6 @@
 """Post routes"""
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
+from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
 from app.config import Config
 from flask import jsonify
@@ -80,10 +81,6 @@ def create_post():
     except Exception as e:
         return render_template("login.html", signIn = True, error = str(e))
 
-
-
-
-
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
@@ -107,7 +104,15 @@ def view_submitted():
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
     posts = prisma.post.find_many(order = {"createdAt": "desc"})
-    return render_template("all_blogs.html", posts = posts)
+    if  request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
+        except:
+            return render_template("all_blogs.html", posts = posts)
+    else:
+        return render_template("all_blogs.html", posts = posts)
 
 # Redirects on request for myblogs
 @post_routes.route("/myblogs", methods=["GET"])
@@ -168,3 +173,15 @@ def edit_post(post_id):
 
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, showLogout=True)
+
+@post_routes.route("/blog/<int:post_id>", methods=["GET"])
+def view_post(post_id):
+    post = prisma.post.find_unique(where={"id": post_id})
+    author_id = get_author_id_from_token()
+    author = prisma.user.find_unique(where={"id": author_id})
+    if post:
+        return render_template("read_more.html", post=post, showLogout=True, author= author )
+    abort(404)
+
+
+

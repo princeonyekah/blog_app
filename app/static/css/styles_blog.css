@@ -7,8 +7,7 @@
 
 .header-container{
     width: auto;
-<<<<<<< HEAD
-=======
+    display: flex;
     display: flex;
 >>>>>>> c1a4de980e4ea83ecb11f616768cc94b78ecfc08
     height: fit-content;

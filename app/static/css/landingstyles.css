@@ -1,17 +1,36 @@
-body {
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
-    background: url('../land.jpg') no-repeat center center fixed;
-    background-size: cover;
-}
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Set a light background color */
+    height: 100%;
+  }
 
-.content {
-    /* Add styles for your content area */
-    text-align: center;
-    padding: 50px;
-}
+  .navbar {
+    background-color: #343a40; /* Set a dark background color for the navbar */
+    color: #ffffff; /* Set text color for the navbar */
+     /* Add padding to the navbar */
+  }
 
-.nav{
-    height: 80px;
-}
+  .main{
+    background-image: url('../lands.jpg'); /* Set the background image */
+    background-size: cover  ; /* Cover the entire container with the background image */
+    background-position: center center; /* Center the background image */
+    background-repeat: no-repeat;
+    height: 100%;
+    padding-left: 50px;
+    padding-top: 50px;
+  }
 
+  .first-head{
+    font-size:80px;
+    font-weight: bolder;
+    color: black;
+  }
+
+  .sub{
+    color: black;
+    font-weight: bold;
+    font-size: 28px;
+    font-style: italic;
+  }

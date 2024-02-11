@@ -1,5 +1,11 @@
-<head>
-    <link rel="stylesheet" href="../static/css/styles_blog.css" />
+ <head>
+  <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/css/myblogs.css" />
     <script
       src="https://kit.fontawesome.com/38269b1820.js"
       crossorigin="anonymous"
@@ -16,6 +22,20 @@
             >
           </li>
           <li>
+            <a href="/myblogs"
+              ><i class="fa-solid fa-book-open-reader"></i>
+              <p>My Blogs</p></a
+            >
+          </li>
+          {% if showLogout %}
+          <li>
+            <a href="/post/{{author.id}}">
+                <i class="fa-solid fa-pen-to-square"></i>
+              <p>Write</p></a
+            >
+          </li>
+          {% endif %}
+          <li>
             <a href="#explore"
               ><i class="fa-regular fa-compass"></i>
               <p>Explore</p></a
@@ -28,6 +48,14 @@
               <p>Learn</p></a
             >
           </li>
+          {% if showLogout %}
+          <li>
+            <a href="#user-profile"
+              ><i class="fa-solid fa-user"></i>
+              <p>User Profile</p></a
+            >
+          </li>
+          {% else %}
           <li>
             <a href="/register"
               ><i class="fa-solid fa-user"></i>
@@ -41,6 +69,7 @@
               <p>Sign In</p></a
             >
           </li>
+          {% endif %}
           <div class="active"></div>
         </ul>
       </div>

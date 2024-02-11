@@ -13,10 +13,12 @@ from flask_jwt_extended import create_access_token
 import jwt
 from app.utils.auth import authenticate, register_user
 from app.config import Config
+from datetime import timedelta
 
 prisma = Config.PRISMA
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
+
 
 auth_routes = Blueprint("auth", __name__)
 
@@ -55,7 +57,9 @@ def login_post():
         session[
             "success"
         ] = f'Authenticated as {user.name} click to <a href="/logout">logout</a>.'
-        token = create_access_token(identity={"user": {"id": user.id}})
+        token = create_access_token(
+            identity={"user": {"id": user.id}}
+        )
         resp = make_response(redirect(url_for("user.user_posts", author_id=user.id, showLogout = True)))
         resp.set_cookie("access_token", token, httponly=True, max_age=86400)
         return resp
