@@ -42,4 +42,5 @@ def create_app(config_class=Config):
     return app
 
 application = create_app()
-application.run(debug=True)
+
+application.run(host="0.0.0.0", debug=True)
