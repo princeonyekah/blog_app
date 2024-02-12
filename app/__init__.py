@@ -40,6 +40,6 @@ def create_app(config_class=Config):
 
 
     return app
-if __name__ == '__main__':
-    application = create_app()
-    application.run(debug=True)
+
+application = create_app()
+application.run(debug=True)
