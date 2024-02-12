@@ -8,7 +8,7 @@ class Config:
     """Set Flask configuration vars from .env file."""
 
     # Server configuration
-    PORT = environ.get("PORT", 5000)
+    #PORT = environ.get("PORT", 5000)
 
     # Database configuration
     PRISMA = Prisma()
