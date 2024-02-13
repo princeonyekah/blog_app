@@ -183,5 +183,35 @@ def view_post(post_id):
         return render_template("read_more.html", post=post, showLogout=True, author= author )
     abort(404)
 
+# Goes to the user_profile page if user is authorized
+@post_routes.route("/user_profile/<int:author_id>", methods=["GET"])
+def user_profile(author_id):
+    if authorize(author_id, request.cookies.get("access_token")):
+        author = prisma.user.find_unique(where={"id": author_id})
+        if author:
+            return render_template("user_profile.html", showLogout=True, author=author)
+        return "User not found", 404
+    abort(403)
 
-
+# Edit user_profile
+@post_routes.route("/edit_user_profile/<int:author_id>", methods=["GET", "POST"])
+def edit_user_profile(author_id):
+    if authorize(author_id, request.cookies.get("access_token")):
+        author = prisma.user.find_unique(where={"id": author_id})
+        if not author:
+            return "User not found", 404
+        if request.method == "POST":
+            # Process the form submission to update the user profile
+            first_name = request.form.get("first_name")
+            last_name = request.form.get("last_name")
+            email = request.form.get("email")
+            # Update the user profile in the database
+            prisma.user.update(
+                where={"id": author_id},
+                data={"firstName": first_name, "lastName": last_name, "email": email}
+            )
+            # Redirect to the user profile page
+            return redirect(url_for("post.user_profile", author_id=author_id))
+        # Render the edit form with pre-filled data
+        return render_template("edit_user_profile.html", author=author, showLogout=True)
+    abort(403)

@@ -1,0 +1,21 @@
+{% include "head.html" %}
+{% include "sidebar.html" %}
+
+<!-- User Profile -->
+<div class="container mt-4">
+    <div class="card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <img class="card-img-top" src="/static/uploads/{{ author.profilePic }}" alt="Profile Image" style="width: 100%; height: 400px; object-fit: cover">
+        <div class="card-body">
+            <h2 class="card-title">{{ author.username }}</h2>
+            <h5 class="card-title">{{ author.email }}</h5>
+            <h5 class="card-title">{{ author.dateJoined }}</h5>
+            <p class="card-text">{{ author.bio }}</p>
+        </div>
+    </div>
+</div>
+
+<!--Edit button for the profile-->
+<div class="mt-4">
+    <a href="/edit_profile/{{ author.id }}" class="btn btn-primary">Edit Profile</a>
+</div>
+
