@@ -74,7 +74,7 @@ def create_post():
             # Save the file to a directory or database
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
-            return redirect(f"/user/{author_id}/posts")
+            return redirect(f"/user/{author_id}/posts", new_post=new_post)
         else:
             print("Unauthorized")
             abort(403)
