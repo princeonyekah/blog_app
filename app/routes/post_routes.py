@@ -86,20 +86,22 @@ def view_submitted():
     author = prisma.user.find_many()
     author_id = get_author_id_from_token()
     try:
-        if  request.cookies.get("access_token"):
-                author = prisma.user.find_unique(where={"id": author_id})
-                posts = prisma.post.find_many(where={"authorId": author_id},
-                                           order = {"createdAt": "desc"})
-                return render_template(
-                    "myblogs.html", showLogout=True, author=author, posts=posts,)
+        if request.cookies.get("access_token"):
+            author = prisma.user.find_unique(where={"id": author_id})
+            posts = prisma.post.find_many(where={"authorId": author_id},
+                                          order={"createdAt": "desc"})
+            return render_template(
+                "myblogs.html", showLogout=True, author=author, posts=posts,
+            )
         else:
-             return render_template(
-         "login.html", signIn = True
-           )
-    except:
+            return render_template(
+                "login.html", signIn=True
+            )
+    except Exception as e:
         return render_template(
-         "register.html", signIn = True
-           )
+            "register.html", signIn=True,
+            error=str(e)
+        )
 
 @post_routes.route("/all_blogs", methods=["GET"])
 def all_blogs():
@@ -200,18 +202,53 @@ def edit_user_profile(author_id):
         author = prisma.user.find_unique(where={"id": author_id})
         if not author:
             return "User not found", 404
+
+        if request.method == "GET":
+            # Render the edit form with pre-filled data
+            return render_template("edit_user_profile.html", author=author, showLogout=True)
+
         if request.method == "POST":
             # Process the form submission to update the user profile
             first_name = request.form.get("first_name")
             last_name = request.form.get("last_name")
             email = request.form.get("email")
+            profilePic = request.files['profilePic']
+            profilePic.save(os.path.join(app.config['UPLOAD_FOLDER'], profilePic.filename))
+            profilePic.filename = secure_filename(profilePic.filename)
+
             # Update the user profile in the database
             prisma.user.update(
                 where={"id": author_id},
-                data={"firstName": first_name, "lastName": last_name, "email": email}
+                data={"firstName": first_name,
+                      "lastName": last_name,
+                      "email": email,
+                      "profilePic": profilePic.filename}
             )
             # Redirect to the user profile page
             return redirect(url_for("post.user_profile", author_id=author_id))
         # Render the edit form with pre-filled data
         return render_template("edit_user_profile.html", author=author, showLogout=True)
     abort(403)
+
+@post_routes.route("/update_profile/<int:author_id>", methods=["POST"])
+def update_profile(author_id):
+    if request.method == "POST":
+        data = request.form
+        author = prisma.user.find_unique(where={"id": author_id})
+        if not author:
+            return "User not found", 404
+        new_username = data.get("username")
+        new_email = data.get("email")
+        new_bio = data.get("bio")
+        new_profilePic = request.files['profilePic']
+        new_profilePic.save(os.path.join(app.config['UPLOAD_FOLDER'], new_profilePic.filename))
+        new_profilePic.filename = secure_filename(new_profilePic.filename)
+
+        prisma.user.update(where={"id": author_id},
+                            data={"name": new_username,
+                                  "email": new_email,
+                                  "bio": new_bio,
+                                  "profilePic": new_profilePic.filename
+                                  })
+        return redirect(url_for("post.user_profile", author_id=author_id))
+    return render_template("edit_user_profile.html", author=author, showLogout=True)
