@@ -230,25 +230,43 @@ def edit_user_profile(author_id):
         return render_template("edit_user_profile.html", author=author, showLogout=True)
     abort(403)
 
-@post_routes.route("/update_profile/<int:author_id>", methods=["POST"])
+@post_routes.route("/update_profile/<int:author_id>", methods=["GET", "POST"])
 def update_profile(author_id):
-    if request.method == "POST":
-        data = request.form
+    if request.method == "GET":
+        # Retrieve the author information for displaying the edit form
         author = prisma.user.find_unique(where={"id": author_id})
         if not author:
             return "User not found", 404
+        # Render the edit_user_profile.html template with author information
+        return render_template("edit_user_profile.html", author=author, showLogout=True)
+
+    if request.method == "POST":
+        # Retrieve form data from the request
+        data = request.form
+        # Retrieve the author information for updating
+        author = prisma.user.find_unique(where={"id": author_id})
+        if not author:
+            return "User not found", 404
+        # Extract new user data from the form
         new_username = data.get("username")
         new_email = data.get("email")
         new_bio = data.get("bio")
+        # Retrieve the profile picture file from the request
         new_profilePic = request.files['profilePic']
+        # Save the profile picture file to the upload folder
         new_profilePic.save(os.path.join(app.config['UPLOAD_FOLDER'], new_profilePic.filename))
+        # Secure the filename to prevent any possible security issues
         new_profilePic.filename = secure_filename(new_profilePic.filename)
 
+        # Update user information in the database
         prisma.user.update(where={"id": author_id},
                             data={"name": new_username,
                                   "email": new_email,
                                   "bio": new_bio,
                                   "profilePic": new_profilePic.filename
                                   })
+        # Redirect the user to their updated profile page
         return redirect(url_for("post.user_profile", author_id=author_id))
+
+    # If the request method is neither GET nor POST, render the edit form with author information
     return render_template("edit_user_profile.html", author=author, showLogout=True)
