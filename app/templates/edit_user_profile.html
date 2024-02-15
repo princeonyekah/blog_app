@@ -3,7 +3,7 @@
 
 <div class="container mt-4">
     <h2>Edit Profile</h2>
-    <form action="/update_profile/{{ author.id }}" method="POST">
+    <form action="/update_profile/{{ author.id }}" method="POST" enctype="multipart/form-data">
         <!-- Input fields for updating profile information -->
         <div class="form-group">
             <label for="username">Username:</label>

@@ -111,8 +111,8 @@ def all_blogs():
             author_id = get_author_id_from_token()
             author = prisma.user.find_unique(where={"id": author_id})
             return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
-        except:
-            return render_template("all_blogs.html", posts = posts)
+        except Exception as e:
+            return render_template("all_blogs.html", posts = posts, error = str(e))
     else:
         return render_template("all_blogs.html", posts = posts)
 
@@ -209,11 +209,12 @@ def edit_user_profile(author_id):
 
         if request.method == "POST":
             # Process the form submission to update the user profile
+            UPLOAD_FOLDER = 'app/static/uploads'
             first_name = request.form.get("first_name")
             last_name = request.form.get("last_name")
             email = request.form.get("email")
             profilePic = request.files['profilePic']
-            profilePic.save(os.path.join(app.config['UPLOAD_FOLDER'], profilePic.filename))
+            profilePic.save(os.path.join(UPLOAD_FOLDER, profilePic.filename))
             profilePic.filename = secure_filename(profilePic.filename)
 
             # Update the user profile in the database
@@ -233,16 +234,19 @@ def edit_user_profile(author_id):
 @post_routes.route("/update_profile/<int:author_id>", methods=["GET", "POST"])
 def update_profile(author_id):
     if request.method == "GET":
-        # Retrieve the author information for displaying the edit form
-        author = prisma.user.find_unique(where={"id": author_id})
-        if not author:
-            return "User not found", 404
-        # Render the edit_user_profile.html template with author information
-        return render_template("edit_user_profile.html", author=author, showLogout=True)
+        try:
+            # Retrieve the author information for displaying the edit form
+            author = prisma.user.find_unique(where={"id": author_id})
+            if not author:
+                return "User not found", 404
+        except Exception as e:
+            # Render the edit_user_profile.html template with author information
+            return render_template("edit_user_profile.html", author=author, showLogout=True, error=str(e))
 
     if request.method == "POST":
         # Retrieve form data from the request
         data = request.form
+        UPLOAD_FOLDER = 'app/static/uploads'
         # Retrieve the author information for updating
         author = prisma.user.find_unique(where={"id": author_id})
         if not author:
@@ -251,20 +255,29 @@ def update_profile(author_id):
         new_username = data.get("username")
         new_email = data.get("email")
         new_bio = data.get("bio")
+
+        if not all([new_username, new_email, new_bio]):
+            return "Missing form data", 400
         # Retrieve the profile picture file from the request
-        new_profilePic = request.files['profilePic']
+        new_profilePic = request.files.get('profilePic')
+        if new_profilePic is None:
+            return "No file uploaded", 400
         # Save the profile picture file to the upload folder
-        new_profilePic.save(os.path.join(app.config['UPLOAD_FOLDER'], new_profilePic.filename))
+        new_profilePic.save(os.path.join(UPLOAD_FOLDER, new_profilePic.filename))
         # Secure the filename to prevent any possible security issues
         new_profilePic.filename = secure_filename(new_profilePic.filename)
 
-        # Update user information in the database
-        prisma.user.update(where={"id": author_id},
-                            data={"name": new_username,
-                                  "email": new_email,
-                                  "bio": new_bio,
-                                  "profilePic": new_profilePic.filename
-                                  })
+        try:
+            # Update user information in the database
+            prisma.user.update(where={"id": author_id},
+                                data={"name": new_username,
+                                      "email": new_email,
+                                      "bio": new_bio,
+                                      "profilePic": new_profilePic.filename
+                                      })
+        except Exception as e:
+            return str(e), 400
+
         # Redirect the user to their updated profile page
         return redirect(url_for("post.user_profile", author_id=author_id))
 
