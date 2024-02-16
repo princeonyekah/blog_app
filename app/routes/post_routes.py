@@ -178,7 +178,7 @@ def edit_post(post_id):
 
 @post_routes.route("/blog/<int:post_id>", methods=["GET"])
 def view_post(post_id):
-    post = prisma.post.find_unique(where={"id": post_id})
+    post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
     author_id = get_author_id_from_token()
     author = prisma.user.find_unique(where={"id": author_id})
     if post:
