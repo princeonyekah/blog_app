@@ -9,6 +9,9 @@ venv/
 env/
 ENV/
 
+# .gitignore
+venv/
+
 # Instance-specific configuration and folders
 instance/
 
