@@ -202,3 +202,19 @@
     height: auto; /* Maintain aspect ratio */
     border-radius: 10px; /* Rounded corners for image */
 }
+
+.profile-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
