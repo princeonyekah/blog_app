@@ -180,10 +180,19 @@ def edit_post(post_id):
 def view_post(post_id):
     post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
     author_id = get_author_id_from_token()
+
+    #Check if author_id is None
+    if author_id is None:
+        # If author_id is None, then the user is not logged in, take them to the login page
+
+        # it should tell the user that they need to login to view the post
+        message = "You need to login to view this post"
+        return render_template("login.html", signIn=True, message=message)
+
     author = prisma.user.find_unique(where={"id": author_id})
     if post:
         return render_template("read_more.html", post=post, showLogout=True, author= author )
-    
+
     abort(404)
 
 # Goes to the user_profile page if user is authorized
