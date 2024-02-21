@@ -183,7 +183,7 @@ def view_post(post_id):
     author = prisma.user.find_unique(where={"id": author_id})
     if post:
         return render_template("read_more.html", post=post, showLogout=True, author= author )
-    
+
     abort(404)
 
 # Goes to the user_profile page if user is authorized
@@ -238,6 +238,7 @@ def update_profile(author_id):
         try:
             # Retrieve the author information for displaying the edit form
             author = prisma.user.find_unique(where={"id": author_id})
+            
             if not author:
                 return "User not found", 404
         except Exception as e:
@@ -264,9 +265,8 @@ def update_profile(author_id):
         if new_profilePic is None:
             return "No file uploaded", 400
         # Save the profile picture file to the upload folder
-        new_profilePic.save(os.path.join(UPLOAD_FOLDER, new_profilePic.filename))
-        # Secure the filename to prevent any possible security issues
-        new_profilePic.filename = secure_filename(new_profilePic.filename)
+        filename = secure_filename(new_profilePic.filename)
+        new_profilePic.save(os.path.join(UPLOAD_FOLDER, filename))
 
         try:
             # Update user information in the database
@@ -274,7 +274,7 @@ def update_profile(author_id):
                                 data={"name": new_username,
                                       "email": new_email,
                                       "bio": new_bio,
-                                      "profilePic": new_profilePic.filename
+                                      "profilePic": filename
                                       })
         except Exception as e:
             return str(e), 400

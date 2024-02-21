@@ -1,0 +1,70 @@
+{% set title = 'Learn' %}
+{% include "head.html" %}
+{% include "sidebar.html" %}
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video and Images</title>
+    <style>
+        .blog-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .video-container {
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            margin: 0 10px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+        }
+
+        .card-title,
+        .card-text {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="blog-container">
+        <div class="video-container">
+            <div class="card mb-3">
+                <iframe width="630" height="315" src="https://www.youtube.com/embed/ZlbHdYMWSOA?si=S_FMsHqOZZegvJke" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <h5 class="card-title">Hello</h5>
+                <p class="card-text">Michael Jackson</p>
+            </div>
+        </div>
+
+        <div class="image-container">
+            <div class="card mb-3">
+                <img src="image1.jpg" class="card-img-top" alt="Image 1">
+                <h5 class="card-title">Image 1</h5>
+            </div>
+        </div>
+
+        <div class="image-container">
+            <div class="card mb-3">
+                <img src="image2.jpg" class="card-img-top" alt="Image 2">
+                <h5 class="card-title">Image 2</h5>
+            </div>
+        </div>
+
+        <div class="image-container">
+            <div class="card mb-3">
+                <img src="image3.jpg" class="card-img-top" alt="Image 3">
+                <h5 class="card-title">Image 3</h5>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
