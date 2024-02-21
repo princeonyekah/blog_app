@@ -13,6 +13,7 @@
                       <p class="card-text">{{ post.content[:30] }}{% if post.content|length > 30 %}...{% endif %}</p>
                       <a href="/blog/{{post.id}}" class="btn btn-outline-primary rounded-0 float-end">Read more</a>
                       <a href="/edit/{{ post.id }}" class="btn btn-outline-primary mb-3">Edit</a>
+                      <a href="/delete/{{ post.id }}" class="btn btn-outline-danger mb-3">Delete</a>
                   </div>
               </div>
           </div>
