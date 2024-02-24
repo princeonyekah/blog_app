@@ -108,11 +108,11 @@
     <div class="profile-container">
         <div class="profile-card">
             <div class="profile-image-container">
-                {% if author.profilePic %}
+        {% if author.profilePic %}
         <img class="profile-image" src="/static/uploads/{{ author.profilePic }}" alt="Profile Image" onclick="openModal('/static/uploads/{{ author.profilePic }}')">
-    {% else %}
+         {% else %}
         <img class="profile-image" src="/static/uploads/default.jpg" alt="Default Profile Image">
-    {% endif %}
+        {% endif %}
             </div>
             <div class="profile-details">
                 <h2 class="profile-name">{{ author.name }}</h2>
