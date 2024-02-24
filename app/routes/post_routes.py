@@ -159,10 +159,12 @@ def edit_post(post_id):
 def view_post(post_id):
     post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
     author_id = get_author_id_from_token()
-    author = prisma.user.find_unique(where={"id": author_id})
-    if post:
+    author = 0
+    if author_id:
+        author = prisma.user.find_unique(where={"id": author_id})
         return render_template("read_more.html", post=post, showLogout=True, author= author )
-
+    if post:
+        return render_template("read_more.html", post=post, author= author )
     abort(404)
 
 # Goes to the user_profile page if user is authorized
