@@ -227,6 +227,11 @@ def edit_user_profile(author_id):
             profilePic.save(os.path.join(UPLOAD_FOLDER, profilePic.filename))
             profilePic.filename = secure_filename(profilePic.filename)
 
+            # Check if the user has uploaded a profile picture
+            if profilePic.filename == '':
+                # If not, set the profile picture to a default icon
+                profilePic.filename = 'app/static/default_icon.jpg'
+
             # Update the user profile in the database
             prisma.user.update(
                 where={"id": author_id},
@@ -272,8 +277,15 @@ def update_profile(author_id):
         new_profilePic = request.files.get('profilePic')
         if new_profilePic is None:
             return "No file uploaded", 400
+
+        # If didn't upload a new profile picture, use the default icon
+        if new_profilePic.filename == '':
+            new_profilePic.filename = 'app/static/uploads/default_icon.jpg'
+
+        # Create the upload folder if it doesn't exist
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         # Save the profile picture file to the upload folder
-        new_profilePic.save(os.path.join(UPLOAD_FOLDER, new_profilePic.filename))
+        new_profilePic.save(os.path.join(UPLOAD_FOLDER, os.path.basename(new_profilePic.filename)))
         # Secure the filename to prevent any possible security issues
         new_profilePic.filename = secure_filename(new_profilePic.filename)
 
