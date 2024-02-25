@@ -1,4 +1,5 @@
 """Post routes"""
+import shutil
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
@@ -228,8 +229,18 @@ def edit_user_profile(author_id):
 
             # Check if the user has uploaded a profile picture
             if profilePic.filename == '':
-                # If not, set the profile picture to a default icon
-                profilePic.filename = 'default-avatar-icon.jpg'
+                default_image_path = 'app/static/uploads/default-avatar-icon.jpg'
+                if not os.path.exists(default_image_path):
+                    return "Default image not found", 500
+
+                filename = secure_filename(os.path.basename(default_image_path))
+                default_image_destination = os.path.join(UPLOAD_FOLDER, filename)
+
+                # Copy the default image to the upload folder if it doesn't exist there
+                if not os.path.exists(default_image_destination):
+                    shutil.copy(default_image_path, default_image_destination)
+
+                profilePic.filename = filename
 
             # Create the upload folder if it doesn't exist
             os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -287,8 +298,18 @@ def update_profile(author_id):
 
         # If didn't upload a new profile picture, use the default icon
         if new_profilePic.filename == '':
-            new_profilePic.filename = 'default-avatar-icon.jpg'
+            default_image_path = 'app/static/uploads/default-avatar-icon.jpg'
+            if not os.path.exists(default_image_path):
+                return "Default image not found", 500
 
+            filename = secure_filename(os.path.basename(default_image_path))
+            default_image_destination = os.path.join(UPLOAD_FOLDER, filename)
+
+            # Copy the default image to the upload folder if it doesn't exist there
+            if not os.path.exists(default_image_destination):
+                shutil.copy(default_image_path, default_image_destination)
+
+            new_profilePic.filename = filename
         # Create the upload folder if it doesn't exist
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         # Save the profile picture file to the upload folder
