@@ -233,6 +233,7 @@ def edit_user_profile(author_id):
                 if not os.path.exists(default_image_path):
                     return "Default image not found", 500
 
+                # Secures the filename
                 filename = secure_filename(os.path.basename(default_image_path))
                 default_image_destination = os.path.join(UPLOAD_FOLDER, filename)
 
