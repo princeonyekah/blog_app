@@ -108,7 +108,11 @@
     <div class="profile-container">
         <div class="profile-card">
             <div class="profile-image-container">
-                <img class="profile-image" src="/static/uploads/{{ author.profilePic }}" alt="Profile Image" onclick="openModal('/static/uploads/{{ author.profilePic }}')">
+        {% if author.profilePic %}
+        <img class="profile-image" src="/static/uploads/{{ author.profilePic }}" alt="Profile Image" onclick="openModal('/static/uploads/{{ author.profilePic }}')">
+         {% else %}
+        <img class="profile-image" src="/static/uploads/default.jpg" alt="Default Profile Image">
+        {% endif %}
             </div>
             <div class="profile-details">
                 <h2 class="profile-name">{{ author.name }}</h2>

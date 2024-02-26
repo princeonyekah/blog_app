@@ -75,12 +75,13 @@ def create_post():
             # Save the file to a directory or database
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
-            return redirect(f"/user/{author_id}/posts", new_post=new_post)
+            return redirect(f"/user/{author_id}/posts")
         else:
             print("Unauthorized")
             abort(403)
     except Exception as e:
         return render_template("login.html", signIn = True, error = str(e))
+
 
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
@@ -125,28 +126,6 @@ def myblogs():
 
 @post_routes.route("/edit/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
-    # """Edit an existing post"""
-    # author_id = get_author_id_from_token()
-    # if not author_id:
-    #     abort(403)  # User is not authorized
-
-    # post = prisma.post.find_unique(where={"id": post_id})
-    # if not post:
-    #     abort(404)  # Post not found
-
-    # if post.authorId != author_id:
-    #     abort(403)  # User is not the author of the post
-
-    # if request.method == "POST":
-    #     title = request.form.get("title")
-    #     content = request.form.get("content")
-    #     # Update the post in the database
-    #     prisma.post.update(
-    #         where={"id": post_id},
-    #         data={"title": title, "content": content}
-    #     )
-    #     return redirect(url_for("post.create_post_now", author_id=post.authorId)
-    # Check if the user is authorized to edit posts
     author_id = get_author_id_from_token()
     author = prisma.user.find_unique(where={"id": author_id})
     if not author_id:
@@ -172,7 +151,7 @@ def edit_post(post_id):
             data={"title": title, "content": content}
         )
         # Redirect to the page displaying all posts by the author
-        return redirect(url_for("post.create_post_now", author_id=post.authorId))
+        return redirect(url_for("post.view_post", post_id = post_id))
 
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, showLogout=True)
@@ -190,8 +169,9 @@ def view_post(post_id):
         message = "You need to login to view this post"
         return render_template("login.html", signIn=True, message=message)
 
-    author = prisma.user.find_unique(where={"id": author_id})
-    if post:
+    author = 0
+    if author_id:
+        author = prisma.user.find_unique(where={"id": author_id})
         return render_template("read_more.html", post=post, showLogout=True, author= author )
 
     abort(404)
@@ -211,6 +191,7 @@ def user_profile(author_id):
 def edit_user_profile(author_id):
     if authorize(author_id, request.cookies.get("access_token")):
         author = prisma.user.find_unique(where={"id": author_id})
+        print(author)
         if not author:
             return "User not found", 404
 
@@ -268,6 +249,7 @@ def update_profile(author_id):
         try:
             # Retrieve the author information for displaying the edit form
             author = prisma.user.find_unique(where={"id": author_id})
+
             if not author:
                 return "User not found", 404
         except Exception as e:
@@ -291,6 +273,20 @@ def update_profile(author_id):
             return "Missing form data", 400
         # Retrieve the profile picture file from the request
         new_profilePic = request.files.get('profilePic')
+        if new_profilePic:
+            # Save the profile picture file to the upload folder
+            filename = secure_filename(new_profilePic.filename)
+            new_profilePic.save(os.path.join(UPLOAD_FOLDER, filename))
+            try:
+                # Update user information in the database
+                prisma.user.update(where={"id": author_id},
+                                    data={"name": new_username,
+                                        "email": new_email,
+                                        "bio": new_bio,
+                                        "profilePic": filename
+                                        })
+            except Exception as e:
+                return str(e), 400
         if new_profilePic is None:
             return "No file uploaded", 400
 
@@ -330,7 +326,29 @@ def update_profile(author_id):
             return str(e), 400
 
         # Redirect the user to their updated profile page
-        return redirect(url_for("post.user_profile", author_id=author_id))
+            return redirect(url_for("post.user_profile", author_id=author_id))
+        else:
+            prisma.user.update(where={"id": author_id},
+                                    data={"name": new_username,
+                                        "email": new_email,
+                                        "bio": new_bio,
+                                        })
+            return redirect(url_for("post.user_profile", author_id=author_id))
 
     # If the request method is neither GET nor POST, render the edit form with author information
     return render_template("edit_user_profile.html", author=author, showLogout=True)
+
+
+@post_routes.route("/delete/<int:post_id>", methods=["GET"])
+def delete_post(post_id):
+    author_id = get_author_id_from_token()
+    if not author_id:
+        abort(403)
+    post = prisma.post.find_unique(where={"id": post_id})
+    if not post:
+        abort(404)
+    if post.authorId != author_id:
+        abort(403)
+    prisma.post.delete(where={"id": post_id})
+    return redirect(f"/user/{author_id}/posts")
+# return redirect(url_for("post.create_post_now", author_id=post.authorId))
