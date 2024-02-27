@@ -285,3 +285,8 @@ def delete_post(post_id):
     prisma.post.delete(where={"id": post_id})
     return redirect(f"/user/{author_id}/posts")
 # return redirect(url_for("post.create_post_now", author_id=post.authorId))
+
+
+@post_routes.route("/learn", methods = ["GET"])
+def learn():
+    return render_template('learn.html')

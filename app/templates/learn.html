@@ -11,22 +11,20 @@
     <style>
         .blog-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column; /* Display each video in a single column */
+            align-items: center; /* Center the videos horizontally */
         }
 
         .video-container {
             margin-bottom: 20px;
-        }
-
-        .image-container {
-            margin: 0 10px;
+            width: 100%; /* Each video container takes up the full width */
+            max-width: 630px; /* Limit the maximum width of each video container */
         }
 
         .card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
+            width: 100%; /* Each card takes up the full width of the video container */
+            max-width: 630px; /* Limit the maximum width of each card */
         }
 
         .card-title,
@@ -37,32 +35,35 @@
 </head>
 <body>
     <div class="blog-container">
-        <div class="video-container">
+        <div class="video-container pt-4">
             <div class="card mb-3">
                 <iframe width="630" height="315" src="https://www.youtube.com/embed/ZlbHdYMWSOA?si=S_FMsHqOZZegvJke" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                <h5 class="card-title">Hello</h5>
-                <p class="card-text">Michael Jackson</p>
+                <h5 class="card-title">How to Write a Blog Post For Beginners</h5>
             </div>
         </div>
 
-        <div class="image-container">
+        <div class="video-container">
             <div class="card mb-3">
-                <img src="image1.jpg" class="card-img-top" alt="Image 1">
-                <h5 class="card-title">Image 1</h5>
+                <iframe width="630" height="315" src="https://www.youtube.com/embed/uly9Bp0ayjs?si=tb6hJkWXR10lZdd6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <h5 class="card-title">How to Write a Perfect Blog Post in 2023</h5>
             </div>
         </div>
-
-        <div class="image-container">
+        <div class="video-container">
             <div class="card mb-3">
-                <img src="image2.jpg" class="card-img-top" alt="Image 2">
-                <h5 class="card-title">Image 2</h5>
+                <iframe width="630" height="315" src="https://www.youtube.com/embed/z1ZDHgUFX0A?si=D7XAxUPfewVkXQAD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <h5 class="card-title"> 7 Beginner Writing Tips</h5>
             </div>
         </div>
-
-        <div class="image-container">
+        <div class="video-container">
             <div class="card mb-3">
-                <img src="image3.jpg" class="card-img-top" alt="Image 3">
-                <h5 class="card-title">Image 3</h5>
+                <iframe width="630" height="315" src="https://www.youtube.com/embed/5LxiYwMrwRg?si=I-CSzjIV3B2R_bFj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <h5 class="card-title">My Top 12 Writing Tips</h5>
+            </div>
+        </div>
+        <div class="video-container">
+            <div class="card mb-3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/CN3jWNzG3kE?si=o9D9Xxv_jjUG3ZgP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <h5 class="card-title"> The Art of Writing</h5>
             </div>
         </div>
     </div>
