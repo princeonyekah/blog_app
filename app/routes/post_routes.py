@@ -357,3 +357,16 @@ def delete_post(post_id):
 @post_routes.route("/learn", methods = ["GET"])
 def learn():
     return render_template('learn.html')
+
+# I want this to ask the user to confirm the delete
+@post_routes.route("/confirm_delete/<int:post_id>", methods=["GET"])
+def confirm_delete(post_id):
+    author_id = get_author_id_from_token()
+    if not author_id:
+        abort(403)
+    post = prisma.post.find_unique(where={"id": post_id})
+    if not post:
+        abort(404)
+    if post.authorId != author_id:
+        abort(403)
+    return render_template("confirm_delete.html", post=post, showLogout=True)
