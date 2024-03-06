@@ -358,7 +358,7 @@ def delete_post(post_id):
 def learn():
     return render_template('learn.html')
 
-# I want this to ask the user to confirm the delete
+# Confirmatiion of Delete
 @post_routes.route("/confirm_delete/<int:post_id>", methods=["GET"])
 def confirm_delete(post_id):
     author_id = get_author_id_from_token()
@@ -370,3 +370,6 @@ def confirm_delete(post_id):
     if post.authorId != author_id:
         abort(403)
     return render_template("confirm_delete.html", post=post, showLogout=True)
+
+# Explore
+@
