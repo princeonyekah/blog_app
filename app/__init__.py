@@ -5,15 +5,17 @@ from .config import Config
 from .routes.auth_routes import auth_routes
 from .routes.user_routes import user_routes
 from .routes.post_routes import post_routes
+from flask_ckeditor import CKEditor
 from .middlewares import setup_middlewares
 import os
 from datetime import timedelta
 
-
+ckeditor = CKEditor()
 
 def create_app(config_class=Config):
     """Create the Flask app instance"""
     app = Flask(__name__)
+    ckeditor.init_app(app)
     UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}

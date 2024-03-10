@@ -1,8 +1,8 @@
 """Post routes"""
 import shutil
 from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
-from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
+from flask_ckeditor import CKEditor
 from app.config import Config
 from flask import jsonify
 from flask_jwt_extended import JWTManager
@@ -11,6 +11,8 @@ from os import environ
 from werkzeug.utils import secure_filename
 import os
 from flask import current_app as app
+from flask_ckeditor import cleanify
+
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 prisma = Config.PRISMA
@@ -50,7 +52,7 @@ def create_post_now(author_id):
 def create_post():
     """Create a new post"""
     title = request.form.get("title")
-    content = request.form.get("content")
+    content =  cleanify(request.form.get('ckeditor'))
     author_email = request.form.get("authorEmail")
     author_id = request.form.get("authorId")
 
