@@ -374,4 +374,7 @@ def confirm_delete(post_id):
     return render_template("confirm_delete.html", post=post, showLogout=True)
 
 # Explore
-@
+@post_routes.routea("/explore", methods=["GET"])
+def explore():
+    posts = prisma.post.find_many(order = {"createdAt": "desc"})
+    return render_template("explore.html", posts=posts)
