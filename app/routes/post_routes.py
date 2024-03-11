@@ -262,10 +262,12 @@ def update_profile(author_id):
         # Retrieve form data from the request
         data = request.form
         UPLOAD_FOLDER = 'app/static/uploads'
+
         # Retrieve the author information for updating
         author = prisma.user.find_unique(where={"id": author_id})
         if not author:
             return "User not found", 404
+
         # Extract new user data from the form
         new_username = data.get("username")
         new_email = data.get("email")
@@ -273,48 +275,15 @@ def update_profile(author_id):
 
         if not all([new_username, new_email, new_bio]):
             return "Missing form data", 400
+
         # Retrieve the profile picture file from the request
         new_profilePic = request.files.get('profilePic')
         if new_profilePic:
             # Save the profile picture file to the upload folder
             filename = secure_filename(new_profilePic.filename)
             new_profilePic.save(os.path.join(UPLOAD_FOLDER, filename))
-            try:
-                # Update user information in the database
-                prisma.user.update(where={"id": author_id},
-                                    data={"name": new_username,
-                                        "email": new_email,
-                                        "bio": new_bio,
-                                        "profilePic": filename
-                                        })
-            except Exception as e:
-                return str(e), 400
-        if new_profilePic is None:
+        else:
             return "No file uploaded", 400
-
-        # Secure the filename to prevent any possible security issues
-        new_profilePic.filename = secure_filename(new_profilePic.filename)
-
-        # If didn't upload a new profile picture, use the default icon
-        if new_profilePic.filename == '':
-            default_image_path = 'app/static/uploads/default-avatar-icon.jpg'
-            if not os.path.exists(default_image_path):
-                return "Default image not found", 500
-
-            filename = secure_filename(os.path.basename(default_image_path))
-            default_image_destination = os.path.join(UPLOAD_FOLDER, filename)
-
-            # Copy the default image to the upload folder if it doesn't exist there
-            if not os.path.exists(default_image_destination):
-                shutil.copy(default_image_path, default_image_destination)
-
-            new_profilePic.filename = filename
-        # Create the upload folder if it doesn't exist
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        # Save the profile picture file to the upload folder
-        print("Saving file:", new_profilePic.filename)
-        new_profilePic.save(os.path.join(UPLOAD_FOLDER, new_profilePic.filename))
-
 
         try:
             # Update user information in the database
@@ -322,20 +291,14 @@ def update_profile(author_id):
                                 data={"name": new_username,
                                       "email": new_email,
                                       "bio": new_bio,
-                                      "profilePic": new_profilePic.filename
+                                      "profilePic": filename
                                       })
         except Exception as e:
+            # Rollback the file saving if database update fails
+            os.remove(os.path.join(UPLOAD_FOLDER, filename))
             return str(e), 400
 
-        # Redirect the user to their updated profile page
-            return redirect(url_for("post.user_profile", author_id=author_id))
-        else:
-            prisma.user.update(where={"id": author_id},
-                                    data={"name": new_username,
-                                        "email": new_email,
-                                        "bio": new_bio,
-                                        })
-            return redirect(url_for("post.user_profile", author_id=author_id))
+        return redirect(url_for("post.user_profile", author_id=author_id))
 
     # If the request method is neither GET nor POST, render the edit form with author information
     return render_template("edit_user_profile.html", author=author, showLogout=True)
