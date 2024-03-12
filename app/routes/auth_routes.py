@@ -14,6 +14,7 @@ import jwt
 from app.utils.auth import authenticate, register_user
 from app.config import Config
 from datetime import timedelta
+from markupsafe import Markup
 
 prisma = Config.PRISMA
 
@@ -34,6 +35,12 @@ def login():
             author_id = payload.get('sub', {}).get('user', {}).get('id')
             author = prisma.user.find_unique(where={"id": author_id})
             posts = prisma.post.find_many(where={"authorId": author_id})
+
+            for post in posts:
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+                    post.content = Markup(post.content)
+
             return render_template(
                     "myblogs.html", showLogout=True, author=author, posts=posts
                 )

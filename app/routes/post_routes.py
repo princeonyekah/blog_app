@@ -10,8 +10,7 @@ from os import environ
 from werkzeug.utils import secure_filename
 import os
 from flask import current_app as app
-from flask_ckeditor import cleanify
-
+from markupsafe import Markup
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 prisma = Config.PRISMA
@@ -45,13 +44,15 @@ def create_post_now(author_id):
                 "write.html", showLogout=True, author=author, posts=posts
             )
         return "User not found", 404
-    abort(403)
+    else:
+        return render_template("login.html", signIn = True)
+
 
 @post_routes.route("/post", methods=["POST"])
 def create_post():
     """Create a new post"""
     title = request.form.get("title")
-    content =  cleanify(request.form.get('ckeditor'))
+    content =  request.form.get('ckeditor')
     author_email = request.form.get("authorEmail")
     author_id = request.form.get("authorId")
 
@@ -72,14 +73,14 @@ def create_post():
                     "imageFilename": image_filename  # Optionally, save image filename
                 }
             )
-
             # Save the file to a directory or database
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
             return redirect(f"/user/{author_id}/posts")
         else:
             print("Unauthorized")
-            abort(403)
+            return render_template("login.html", signIn = True, error = str(e))
+
     except Exception as e:
         return render_template("login.html", signIn = True, error = str(e))
 
@@ -88,36 +89,53 @@ def create_post():
 def view_submitted():
     author = prisma.user.find_many()
     author_id = get_author_id_from_token()
-    try:
-        if request.cookies.get("access_token"):
-            author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many(where={"authorId": author_id},
-                                          order={"createdAt": "desc"})
-            return render_template(
-                "myblogs.html", showLogout=True, author=author, posts=posts,
-            )
-        else:
-            return render_template(
-                "login.html", signIn=True
-            )
-    except Exception as e:
-        return render_template(
-            "register.html", signIn=True,
-            error=str(e)
-        )
 
-@post_routes.route("/all_blogs", methods=["GET"])
-def all_blogs():
-    posts = prisma.post.find_many(order = {"createdAt": "desc"})
-    if  request.cookies.get("access_token"):
+    if request.cookies.get("access_token"):
         try:
             author_id = get_author_id_from_token()
             author = prisma.user.find_unique(where={"id": author_id})
-            return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
+            posts = prisma.post.find_many(where={"authorId": author_id},
+                                            order={"createdAt": "desc"})
+
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+                    post.content = Markup(post.content)
+            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
         except Exception as e:
-            return render_template("all_blogs.html", posts = posts, error = str(e))
+            return render_template("login.html", posts=posts,signIn= True, error=str(e))
     else:
-        return render_template("all_blogs.html", posts = posts)
+        return render_template("login.html",signIn= True)
+
+
+@post_routes.route("/all_blogs", methods=["GET"])
+def all_blogs():
+    posts = prisma.post.find_many(order={"createdAt": "desc"})
+    author_id = get_author_id_from_token()
+    if request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+                    post.content = Markup(post.content)
+            return render_template("all_blogs.html", posts=posts, author=author, showLogout=True)
+
+        except Exception as e:
+            return render_template("all_blogs.html", posts=posts, error=str(e))
+    else:
+        for post in posts:
+            if len(post.content) > 40:
+                post.content = post.content[:40] + "..."
+                post.content = Markup(post.content)
+        return render_template("all_blogs.html", posts=posts, author= None)
+
+
+
 
 # Redirects on request for myblogs
 @post_routes.route("/myblogs", methods=["GET"])
@@ -134,7 +152,8 @@ def edit_post(post_id):
 
     # Fetch the existing post from the database
     post = prisma.post.find_unique(where={"id": post_id})
-    print(post)
+    user = prisma.user.find_unique(where={"id": author_id})
+
     if not post:
         abort(404)  # Post not found
 
@@ -153,9 +172,11 @@ def edit_post(post_id):
         )
         # Redirect to the page displaying all posts by the author
         return redirect(url_for("post.view_post", post_id = post_id))
+    # post = Markup(post.content)
+    print(user)
 
     # Render the edit form with pre-filled data
-    return render_template("edit_post.html", post=post, author=author, showLogout=True)
+    return render_template("edit_post.html", post=post, author=author, user = user, showLogout=True)
 
 @post_routes.route("/blog/<int:post_id>", methods=["GET"])
 def view_post(post_id):
@@ -164,8 +185,10 @@ def view_post(post_id):
     author = 0
     if author_id:
         author = prisma.user.find_unique(where={"id": author_id})
+        post.content = Markup(post.content)
         return render_template("read_more.html", post=post, showLogout=True, author= author )
     if post:
+        post.content = Markup(post.content)
         return render_template("read_more.html", post=post, author= author )
     abort(404)
 

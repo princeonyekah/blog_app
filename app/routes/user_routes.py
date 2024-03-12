@@ -2,6 +2,7 @@
 from flask import Blueprint, request, render_template, abort
 from app.utils.auth import authorize
 from app.config import Config
+from markupsafe import Markup
 
 prisma = Config.PRISMA
 
@@ -16,6 +17,12 @@ def user_posts(author_id):
         if author:
             posts = prisma.post.find_many(where={"authorId": author_id},
                                            order = {"createdAt": "desc"})
+
+            for post in posts:
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+                    post.content = Markup(post.content)
+
             return render_template(
                 "myblogs.html", showLogout=True, author=author, posts=posts
             )
