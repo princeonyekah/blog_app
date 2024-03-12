@@ -1,0 +1,43 @@
+{% include "head.html" %}
+{% include "sidebar.html" %}
+
+<!-- Add Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<!-- Search form -->
+<form method="GET" action="{{ url_for('post.search_posts') }}" class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" type="text" name="query" placeholder="Search by title or author">
+    <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Search">
+</form>
+
+<!-- Filter form -->
+<form method="GET" action="{{ url_for('post.filter_posts') }}" class="form-inline my-2 my-lg-0">
+    <select name="category" class="form-control">
+        <!-- Replace 'categories' with the actual list of categories -->
+        {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+    <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Filter">
+</form>
+
+<!-- Sort form -->
+<form method="GET" action="{{ url_for('post.sort_posts') }}" class="form-inline my-2 my-lg-0">
+    <select name="sort_by" class="form-control">
+        <option value="date">Date</option>
+        <option value="popularity">Popularity</option>
+    </select>
+    <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Sort">
+</form>
+
+<!-- Display all blogs -->
+{% for post in posts %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="card-title">{{ post.title }}</h2>
+            <h6 class="card-subtitle mb-2 text-muted">By {{ post.author }}</h6>
+            <p class="card-text">Date: {{ post.date }}</p>
+            <p class="card-text">Category: {{ post.category }}</p>
+        </div>
+    </div>
+{% endfor %}

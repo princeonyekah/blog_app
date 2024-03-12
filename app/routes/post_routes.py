@@ -14,6 +14,7 @@ from flask import current_app as app
 import bleach
 
 
+
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
 prisma = Config.PRISMA
 
@@ -318,11 +319,6 @@ def delete_post(post_id):
     return redirect(f"/user/{author_id}/posts")
 # return redirect(url_for("post.create_post_now", author_id=post.authorId))
 
-
-@post_routes.route("/learn", methods = ["GET"])
-def learn():
-    return render_template('learn.html')
-
 # Confirmatiion of Delete
 @post_routes.route("/confirm_delete/<int:post_id>", methods=["GET"])
 def confirm_delete(post_id):
@@ -336,8 +332,52 @@ def confirm_delete(post_id):
         abort(403)
     return render_template("confirm_delete.html", post=post, showLogout=True)
 
+# Learn
+@post_routes.route("/learn", methods = ["GET"])
+def learn():
+    return render_template('learn.html')
+
 # Explore
 @post_routes.route("/explore", methods=["GET"])
 def explore():
-    posts = prisma.post.find_many(order = {"createdAt": "desc"})
-    return render_template("explore.html", posts=posts)
+    return render_template("explore.html")
+
+def perform_search(query):
+    # Implement the actual search logic here
+    search_results = []  # Define the variable and assign an initial value
+    query = request.args.get('query')
+    # Code for performing the search and populating search_results
+    # ...
+    return search_results, query
+
+@post_routes.route("/search", methods=["GET"])
+def search_posts():
+    query = request.args.get('query')
+    # I need to add the post.id to the search results
+    search_results = prisma.post.find_many(where={"title": {"contains": query}})
+    return render_template("search_results.html", posts=search_results)
+
+@post_routes.route("/filter", methods=["GET"])
+def filter_posts():
+    category = request.args.get('category')
+    # Implement the actual filter logic here
+    filtered_posts = perform_filter(category)
+    # Render a template with the filtered posts
+    return render_template("filtered_posts.html", posts=filtered_posts)
+
+def perform_filter(category):
+    # Implement the actual filter logic here
+    filtered_posts = []  # Define the variable and assign an initial value
+    category = request.args.get('category')
+    # Code for performing the filter and populating filtered_posts
+    # ...
+    return filtered_posts, category
+
+@post_routes.route("/sort", methods=["GET"])
+def sort_posts():
+    # Now you can use 'sort_by' to sort posts by date or popularity
+    # You need to implement the actual sort logic
+    sorted_posts = []  # Define the variable and assign an initial value
+    # Code for sorting the posts and populating sorted_posts
+    # ...
+    return render_template("sorted_posts.html", posts=sorted_posts)

@@ -1,0 +1,15 @@
+{% include "head.html" %}
+{% include "sidebar.html" %}
+
+{% block content %}
+<h1>Filtered Posts</h1>
+    <div id="posts" class="container">
+        <!-- This is where the posts will go -->
+        {% for post in filtered_posts %}
+            <div class="post card">
+                <h2 class="card-title">{{ post.title }}</h2>
+                <p class="card-text">{{ post.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
