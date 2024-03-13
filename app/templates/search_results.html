@@ -11,9 +11,7 @@
         <div class="post card">
             <div class="card-body">
                 <h2 class="card-title"><a href="{{ url_for('post.view_post', post_id=post.id) }}">{{ post.title }}</a></h2>
-                <p class="card-text">By {{ post.author }}</p>
-                <p class="card-text">Date: {{ post.date }}</p>
-                <p class="card-text">Category: {{ post.category }}</p>
+                <p class="card-text">Date: {{ post.createdAt.strftime('%B %d, %Y')}}</p>
             </div>
         </div>
     {% endfor %}

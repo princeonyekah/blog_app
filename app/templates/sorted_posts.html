@@ -1,0 +1,29 @@
+<!-- FILEPATH: /c:/Users/Danny_Baine/Documents/GitHub/blog_app/app/templates/sorted_posts.html -->
+{% include "head.html" %}
+<!-- BEGIN: Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<!-- END: Bootstrap CSS -->
+{% include "sidebar.html" %}
+{% block content %}
+<h1 class="text-center">Sorted Posts</h1>
+
+{% if posts %}
+    {% for post in posts|sort(attribute='date') %}
+        <div class="post card">
+            <div class="card-body">
+                <h2 class="card-title"><a href="{{ url_for('post.view_post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <p class="card-text">By {{ post.author }}</p>
+                <p class="card-text">Date: {{ post.date }}</p>
+                <p class="card-text">Category: {{ post.category }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-center">No posts found</p>
+{% endif %}
+
+{% endblock %}<!-- BEGIN: Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!-- END: Bootstrap JS -->

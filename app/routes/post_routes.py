@@ -335,11 +335,19 @@ def confirm_delete(post_id):
 # Learn
 @post_routes.route("/learn", methods = ["GET"])
 def learn():
+    if request.cookies.get("access_token"):
+        author_id = get_author_id_from_token()
+        author = prisma.user.find_unique(where={"id": author_id})
+        return render_template("learn.html", showLogout=True, author=author)
     return render_template('learn.html')
 
 # Explore
 @post_routes.route("/explore", methods=["GET"])
 def explore():
+    if request.cookies.get("access_token"):
+        author_id = get_author_id_from_token()
+        author = prisma.user.find_unique(where={"id": author_id})
+        return render_template("explore.html", showLogout=True, author=author)
     return render_template("explore.html")
 
 def perform_search(query):
@@ -353,14 +361,19 @@ def perform_search(query):
 @post_routes.route("/search", methods=["GET"])
 def search_posts():
     query = request.args.get('query')
-    # I need to add the post.id to the search results
-    search_results = prisma.post.find_many(where={"title": {"contains": query}})
-    return render_template("search_results.html", posts=search_results)
+
+    # Search in the User table by name and include their posts
+    user_results = prisma.user.find_many(where={"name": {"contains": query}}, include={"posts": True})
+
+    # Extract the posts from the user results
+    post_results = [post for user in user_results for post in user.posts]
+
+    return render_template("search_results.html", posts=post_results)
 
 @post_routes.route("/filter", methods=["GET"])
 def filter_posts():
     category = request.args.get('category')
-    # Implement the actual filter logic here
+
     filtered_posts = perform_filter(category)
     # Render a template with the filtered posts
     return render_template("filtered_posts.html", posts=filtered_posts)
