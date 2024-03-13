@@ -33,6 +33,71 @@ def get_author_id_from_token():
             return None
     return None
 
+
+#displays all the blogs on the website
+@post_routes.route("/all_blogs", methods=["GET"])
+def all_blogs():
+    posts = prisma.post.find_many(order={"createdAt": "desc"})
+    author_id = get_author_id_from_token()
+    if request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                post.content = Markup(post.content)
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+            return render_template("all_blogs.html", posts=posts, author=author, showLogout=True)
+
+        except Exception as e:
+            return render_template("all_blogs.html", posts=posts, error=str(e))
+    else:
+        for post in posts:
+            post.content = Markup(post.content)
+            if len(post.content) > 40:
+                post.content = post.content[:40] + "..."
+        return render_template("all_blogs.html", posts=posts, author= None)
+
+#displays blogs owned by writer
+@post_routes.route("/blogs", methods=["GET"])
+def view_submitted():
+    author = prisma.user.find_many()
+    author_id = get_author_id_from_token()
+
+    if request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            posts = prisma.post.find_many(where={"authorId": author_id},
+                                            order={"createdAt": "desc"})
+
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                post.content = Markup(post.content)
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
+        except Exception as e:
+            return render_template("login.html", posts=posts,signIn= True, error=str(e))
+    else:
+        return render_template("login.html",signIn= True)
+
+@post_routes.route("/blog/<int:post_id>", methods=["GET"])
+def view_post(post_id):
+    post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
+    author_id = get_author_id_from_token()
+    author = 0
+    if author_id:
+        author = prisma.user.find_unique(where={"id": author_id})
+        post.content = Markup(post.content)
+        return render_template("read_more.html", post=post, showLogout=True, author= author )
+    if post:
+        post.content = Markup(post.content)
+        return render_template("read_more.html", post=post, author= author )
+    abort(404)
+
+#Creates posts
 @post_routes.route("/post/<int:author_id>", methods=["GET"])
 def create_post_now(author_id):
 
@@ -85,55 +150,6 @@ def create_post():
         return render_template("login.html", signIn = True, error = str(e))
 
 
-@post_routes.route("/blogs", methods=["GET"])
-def view_submitted():
-    author = prisma.user.find_many()
-    author_id = get_author_id_from_token()
-
-    if request.cookies.get("access_token"):
-        try:
-            author_id = get_author_id_from_token()
-            author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many(where={"authorId": author_id},
-                                            order={"createdAt": "desc"})
-
-            # Truncate post content if it's longer than 40 characters
-            for post in posts:
-                if len(post.content) > 40:
-                    post.content = post.content[:40] + "..."
-                    post.content = Markup(post.content)
-            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
-        except Exception as e:
-            return render_template("login.html", posts=posts,signIn= True, error=str(e))
-    else:
-        return render_template("login.html",signIn= True)
-
-
-@post_routes.route("/all_blogs", methods=["GET"])
-def all_blogs():
-    posts = prisma.post.find_many(order={"createdAt": "desc"})
-    author_id = get_author_id_from_token()
-    if request.cookies.get("access_token"):
-        try:
-            author_id = get_author_id_from_token()
-            author = prisma.user.find_unique(where={"id": author_id})
-
-            # Truncate post content if it's longer than 40 characters
-            for post in posts:
-                if len(post.content) > 40:
-                    post.content = post.content[:40] + "..."
-                    post.content = Markup(post.content)
-            return render_template("all_blogs.html", posts=posts, author=author, showLogout=True)
-
-        except Exception as e:
-            return render_template("all_blogs.html", posts=posts, error=str(e))
-    else:
-        for post in posts:
-            if len(post.content) > 40:
-                post.content = post.content[:40] + "..."
-                post.content = Markup(post.content)
-        return render_template("all_blogs.html", posts=posts, author= None)
-
 
 
 
@@ -178,19 +194,6 @@ def edit_post(post_id):
     # Render the edit form with pre-filled data
     return render_template("edit_post.html", post=post, author=author, user = user, showLogout=True)
 
-@post_routes.route("/blog/<int:post_id>", methods=["GET"])
-def view_post(post_id):
-    post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
-    author_id = get_author_id_from_token()
-    author = 0
-    if author_id:
-        author = prisma.user.find_unique(where={"id": author_id})
-        post.content = Markup(post.content)
-        return render_template("read_more.html", post=post, showLogout=True, author= author )
-    if post:
-        post.content = Markup(post.content)
-        return render_template("read_more.html", post=post, author= author )
-    abort(404)
 
 # Goes to the user_profile page if user is authorized
 @post_routes.route("/user_profile/<int:author_id>", methods=["GET"])
