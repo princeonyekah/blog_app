@@ -368,6 +368,12 @@ def search_posts():
     # Extract the posts from the user results
     post_results = [post for user in user_results for post in user.posts]
 
+    # It is not supposed to log the user in if the user is not logged in
+    if request.cookies.get("access_token"):
+        author_id = get_author_id_from_token()
+        author = prisma.user.find_unique(where={"id": author_id})
+        return render_template("search_results.html", posts=post_results, author=author, showLogout=True)
+
     return render_template("search_results.html", posts=post_results)
 
 @post_routes.route("/filter", methods=["GET"])
