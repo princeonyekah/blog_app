@@ -270,18 +270,3 @@ def update_profile(author_id):
 
     # If the request method is neither GET nor POST, render the edit form with author information
     return render_template("edit_user_profile.html", author=author, showLogout=True)
-
-
-@post_routes.route("/delete/<int:post_id>", methods=["GET"])
-def delete_post(post_id):
-    author_id = get_author_id_from_token()
-    if not author_id:
-        abort(403)
-    post = prisma.post.find_unique(where={"id": post_id})
-    if not post:
-        abort(404)
-    if post.authorId != author_id:
-        abort(403)
-    prisma.post.delete(where={"id": post_id})
-    return redirect(f"/user/{author_id}/posts")
-# return redirect(url_for("post.create_post_now", author_id=post.authorId))

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Blog Posts</title>
+    <!-- Include any CSS files or stylesheets -->
+</head>
+<body>
+    <h1>Search Blog Posts</h1>
+    <form action="/search" method="GET">
+        <label for="section">Choose a section:</label>
+        <select name="section" id="section">
+            <option value="sports">Sports</option>
+            <option value="media">Media</option>
+            <option value="arts">Arts</option>
+            <!-- Add more options for other sections as needed -->
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display search results here -->
+    <div id="search-results">
+        <!-- Results will be displayed here -->
+    </div>
+
+</body>
+</html>
