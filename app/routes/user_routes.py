@@ -19,10 +19,9 @@ def user_posts(author_id):
                                            order = {"createdAt": "desc"})
 
             for post in posts:
+                post.content = Markup(post.content)
                 if len(post.content) > 40:
                     post.content = post.content[:40] + "..."
-                    post.content = Markup(post.content)
-
             return render_template(
                 "myblogs.html", showLogout=True, author=author, posts=posts
             )

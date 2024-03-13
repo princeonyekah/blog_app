@@ -34,14 +34,16 @@ def login():
             payload = jwt.decode(access_token, SECRET_KEY, algorithms=['HS256'])
             author_id = payload.get('sub', {}).get('user', {}).get('id')
             author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many(where={"authorId": author_id},
-                                            order={"createdAt": "desc"})
-            # Truncate post content if it's longer than 40 characters
+            posts = prisma.post.find_many(where={"authorId": author_id})
+
             for post in posts:
-                post.content = Markup(post.content)
+                # post.content = Markup(post.content)
                 if len(post.content) > 40:
                     post.content = post.content[:40] + "..."
-            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
+
+            return render_template(
+                    "myblogs.html", showLogout=True, author=author, posts=posts
+                )
         else:
             return render_template("login.html", signIn = True, showLogout=False)
     except jwt.ExpiredSignatureError:
@@ -50,6 +52,8 @@ def login():
     except jwt.InvalidTokenError:
         # Handle invalid token error
         return render_template("login.html", signIn=True, showLogout=False, error="Invalid token.")
+
+
 
 @auth_routes.route("/login", methods=["POST"])
 def login_post():
