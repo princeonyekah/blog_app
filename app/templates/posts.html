@@ -16,7 +16,7 @@
             />
             {% endif %}
             <h3 class="card-title">{{ post.title }}</h3>
-            <p class="card-text">{{ post.content }}</p>
+            <p class="card-text">{{ post.content|safe }}</p>
             <p class="card-text">
               <small class="text-muted">Created on {{ post.createdAt }}</small>
             </p>

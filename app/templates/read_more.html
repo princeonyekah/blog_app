@@ -8,15 +8,13 @@
         <img class="card-img-top" src="/static/uploads/{{ post.imageFilename }}" alt="Post Image" style="width: 100%; height: 400px; object-fit: cover">
         <div class="card-body">
             <h2 class="card-title">{{ post.title }}</h2>
+            <small class="text-muted">Posted by: {{ post.author.name }}</small>
             <p class="card-text">{{ post.content }}</p>
         </div>
-        <div class="user-info">
-            <small class="text-muted"
-            >Posted by: {{ post.author.name }}
-            </small>
-        </div>
+     
     </div>
 </div>
+
 
 
 

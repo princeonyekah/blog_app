@@ -10,7 +10,8 @@ from os import environ
 from werkzeug.utils import secure_filename
 import os
 from flask import current_app as app
-from flask_ckeditor import cleanify
+from markupsafe import Markup
+from flask import flash
 
 
 SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
@@ -34,6 +35,71 @@ def get_author_id_from_token():
             return None
     return None
 
+
+#displays all the blogs on the website
+@post_routes.route("/all_blogs", methods=["GET"])
+def all_blogs():
+    posts = prisma.post.find_many(order={"createdAt": "desc"})
+    author_id = get_author_id_from_token()
+    if request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                post.content = Markup(post.content)
+                # Example custom markup
+                if len(post.content) > 40:
+
+                    post.content = post.content[:40] + "..."
+            return render_template("all_blogs.html", posts=posts, author=author, showLogout=True)
+        except Exception as e:
+            return render_template("all_blogs.html", posts=posts, error=str(e))
+    else:
+        for post in posts:
+            post.content = Markup(post.content)
+            if len(post.content) > 40:
+                post.content = post.content[:40] + "..."
+        return render_template("all_blogs.html", posts=posts, author= None)
+
+#displays blogs owned by writer
+@post_routes.route("/blogs", methods=["GET"])
+def view_submitted():
+    author = prisma.user.find_many()
+    author_id = get_author_id_from_token()
+
+    if request.cookies.get("access_token"):
+        try:
+            author_id = get_author_id_from_token()
+            author = prisma.user.find_unique(where={"id": author_id})
+            posts = prisma.post.find_many(where={"authorId": author_id},
+                                            order={"createdAt": "desc"})
+            # Truncate post content if it's longer than 40 characters
+            for post in posts:
+                post.content = Markup(post.content)
+                if len(post.content) > 40:
+                    post.content = post.content[:40] + "..."
+            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
+        except Exception as e:
+            return render_template("login.html",signIn= True, error=str(e))
+    else:
+        return render_template("login.html",signIn= True)
+
+@post_routes.route("/blog/<int:post_id>", methods=["GET"])
+def view_post(post_id):
+    post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
+    author_id = get_author_id_from_token()
+    author = 0
+    if author_id:
+        author = prisma.user.find_unique(where={"id": author_id})
+        post.content = Markup(post.content)
+        return render_template("read_more.html", post=post, showLogout=True, author= author )
+    if post:
+        post.content = Markup(post.content)
+        return render_template("read_more.html", post=post, author= author )
+    abort(404)
+
+#Creates posts
 @post_routes.route("/post/<int:author_id>", methods=["GET"])
 def create_post_now(author_id):
 
@@ -44,130 +110,94 @@ def create_post_now(author_id):
             return render_template(
                 "write.html", showLogout=True, author=author, posts=posts
             )
-        return "User not found", 404
-    abort(403)
+        return render_template("login.html", signIn = True)
+    else:
+        return render_template("login.html", signIn = True)
 
 @post_routes.route("/post", methods=["POST"])
 def create_post():
     """Create a new post"""
     title = request.form.get("title")
-    content =  cleanify(request.form.get('ckeditor'))
+    content = Markup(request.form.get('ckeditor'))
     author_email = request.form.get("authorEmail")
     author_id = request.form.get("authorId")
 
-     # Handle file upload
     try:
         if not title or not content or not author_email or not author_id:
             print("Missing required fields")
             abort(400)
         elif authorize(author_id, request.cookies.get("access_token")):
-            print("Creating post")
-            image_file = request.files['image']
-            image_filename = secure_filename(image_file.filename)
-            new_post = prisma.post.create(
-                data={
-                    "title": title,
-                    "content": content,
-                    "author": {"connect": {"email": author_email}},
-                    "imageFilename": image_filename  # Optionally, save image filename
-                }
-            )
+            existing_post = prisma.post.find_first(where={"title": title, "content": content})
+            if existing_post:
+                print("Post already exists")
+                # Handle the case where the post already exists (e.g., show an error message)
+                return render_template("error.html", error="Post already exists")
+            else:
+                print("Creating post")
+                image_file = request.files['image']
+                image_filename = secure_filename(image_file.filename)
+                new_post = prisma.post.create(
+                    data={
+                        "title": title,
+                        "content": content,
+                        "author": {"connect": {"email": author_email}},
+                        "imageFilename": image_filename  # Optionally, save image filename
+                    }
+                )
+                # Save the file to a directory or database
+                image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
 
-            # Save the file to a directory or database
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-
-            return redirect(f"/user/{author_id}/posts")
+                return redirect(f"/user/{author_id}/posts")
         else:
             print("Unauthorized")
-            abort(403)
+            return render_template("login.html", signIn=True, error="Unauthorized")
     except Exception as e:
-        return render_template("login.html", signIn = True, error = str(e))
+        return render_template("login.html", signIn=True, error=str(e))
 
 
-@post_routes.route("/blogs", methods=["GET"])
-def view_submitted():
-    author = prisma.user.find_many()
-    author_id = get_author_id_from_token()
-    try:
-        if request.cookies.get("access_token"):
-            author = prisma.user.find_unique(where={"id": author_id})
-            posts = prisma.post.find_many(where={"authorId": author_id},
-                                          order={"createdAt": "desc"})
-            return render_template(
-                "myblogs.html", showLogout=True, author=author, posts=posts,
-            )
-        else:
-            return render_template(
-                "login.html", signIn=True
-            )
-    except Exception as e:
-        return render_template(
-            "register.html", signIn=True,
-            error=str(e)
-        )
-
-@post_routes.route("/all_blogs", methods=["GET"])
-def all_blogs():
-    posts = prisma.post.find_many(order = {"createdAt": "desc"})
-    if  request.cookies.get("access_token"):
-        try:
-            author_id = get_author_id_from_token()
-            author = prisma.user.find_unique(where={"id": author_id})
-            return render_template("all_blogs.html", posts = posts, author= author ,showLogout=True)
-        except Exception as e:
-            return render_template("all_blogs.html", posts = posts, error = str(e))
-    else:
-        return render_template("all_blogs.html", posts = posts)
 
 # Redirects on request for myblogs
 @post_routes.route("/myblogs", methods=["GET"])
 def myblogs():
     return redirect(url_for('post.view_submitted'))
-# ---Edit Post---
 
+
+# ---Edit Post---
 @post_routes.route("/edit/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     author_id = get_author_id_from_token()
-    author = prisma.user.find_unique(where={"id": author_id})
     if not author_id:
         abort(403)  # User is not authorized
 
-    # Fetch the existing post from the database
+    author = prisma.user.find_unique(where={"id": author_id})
+    if not author:
+        abort(404)  # Author not found
+
     post = prisma.post.find_unique(where={"id": post_id})
-    print(post)
+    user = prisma.user.find_unique(where={"id": author_id})
     if not post:
         abort(404)  # Post not found
 
-    # Check if the current user is the author of the post
     if post.authorId != author_id:
         abort(403)  # User is not the author of the post
 
     if request.method == "POST":
-        # Process the form submission to update the post
         title = request.form.get("title")
         content = request.form.get("content")
-        # Update the post in the database
+        image_file = request.files['image']
+        image_filename = secure_filename(image_file.filename)
+
         prisma.post.update(
             where={"id": post_id},
-            data={"title": title, "content": content}
+            data={"title": title,
+                  "content": content,
+                  "imageFilename": image_filename}
         )
-        # Redirect to the page displaying all posts by the author
-        return redirect(url_for("post.view_post", post_id = post_id))
+        flash("Post updated successfully", "success")
+        return redirect(url_for("post.view_post", post_id=post_id))
 
-    # Render the edit form with pre-filled data
-    return render_template("edit_post.html", post=post, author=author, showLogout=True)
+    return render_template("edit_post.html", post=post, author=author,user = user, showLogout=True)
 
-@post_routes.route("/blog/<int:post_id>", methods=["GET"])
-def view_post(post_id):
-    post = prisma.post.find_unique(where={"id": post_id}, include={"author": True})
-    author_id = get_author_id_from_token()
-    author = 0
-    if author_id:
-        author = prisma.user.find_unique(where={"id": author_id})
-        return render_template("read_more.html", post=post, showLogout=True, author= author )
-    if post:
-        return render_template("read_more.html", post=post, author= author )
-    abort(404)
 
 # Goes to the user_profile page if user is authorized
 @post_routes.route("/user_profile/<int:author_id>", methods=["GET"])
@@ -201,6 +231,7 @@ def edit_user_profile(author_id):
             profilePic = request.files['profilePic']
             profilePic.save(os.path.join(UPLOAD_FOLDER, profilePic.filename))
             profilePic.filename = secure_filename(profilePic.filename)
+            print(profilePic.filename)
 
             # Update the user profile in the database
             prisma.user.update(
@@ -274,7 +305,7 @@ def update_profile(author_id):
     return render_template("edit_user_profile.html", author=author, showLogout=True)
 
 
-@post_routes.route("/delete/<int:post_id>", methods=["GET"])
+@post_routes.route("/delete/<int:post_id>", methods=["GET", "POST"])
 def delete_post(post_id):
     author_id = get_author_id_from_token()
     if not author_id:
@@ -286,7 +317,6 @@ def delete_post(post_id):
         abort(403)
     prisma.post.delete(where={"id": post_id})
     return redirect(f"/user/{author_id}/posts")
-# return redirect(url_for("post.create_post_now", author_id=post.authorId))
 
 
 @post_routes.route("/learn", methods = ["GET"])
