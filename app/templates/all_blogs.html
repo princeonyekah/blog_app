@@ -45,7 +45,7 @@
 </div>
 
 <script>
-  const prevBtn = document.getElementById('previous-btn');
+const prevBtn = document.getElementById('previous-btn');
 const nextBtn = document.getElementById('next-btn');
 
 prevBtn.addEventListener('click', () => {
@@ -59,7 +59,7 @@ prevBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', () => {
-    
+
     const currentPageNumber = (window.location.pathname.split('/')[2].split('_')[1])
     if (currentPageNumber < "{{ postsLength }}") {
         window.location.href = `/all_blogs/pg_${parseInt(currentPageNumber) + 1}`
