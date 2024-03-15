@@ -3,6 +3,7 @@ generator client {
   interface = "sync"
   recursive_type_depth = 5
 }
+
 datasource db {
   provider = "sqlite"
   url      = "file:dev.db"
