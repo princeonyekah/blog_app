@@ -46,7 +46,7 @@ def all_blogs(sectionvalue):
     posts = prisma.post.find_many(order={"createdAt": "desc"})[posts_per_page*(page_number-1):posts_per_page*(page_number)]
     author_id = get_author_id_from_token()
     navigation_range = math.ceil(postsLength / posts_per_page)
-    
+
     if get_author_id_from_token():
         try:
             author_id = get_author_id_from_token()
@@ -66,6 +66,7 @@ def all_blogs(sectionvalue):
             if len(post.content) > 40:
                 post.content = post.content[:40] + "..."
         return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author= None)
+
 
 #displays blogs owned by writer
 @post_routes.route("/blogs", methods=["GET"])
@@ -335,3 +336,41 @@ def delete_post(post_id):
 @post_routes.route("/learn", methods = ["GET"])
 def learn():
     return render_template('learn.html')
+
+
+#Explore Feature
+# Explore
+@post_routes.route("/explore", methods=["GET"])
+def explore():
+    if request.cookies.get("access_token"):
+        author_id = 1
+        author = prisma.user.find_unique(where={"id": author_id})
+        posts = prisma.post.find_many(order={"createdAt": "desc"})
+        for post in posts:
+            post.content = Markup(post.content)
+            # Example custom markup
+            if len(post.content) > 40:
+                post.content = post.content[:40] + "..."
+        return render_template("explore.html", showLogout=True, author=author, posts = posts)
+    return render_template("explore.html")
+
+
+@post_routes.route("/search", methods=["GET"])
+def search_posts():
+    query = request.args.get('query')
+    # Search in Post table for posts
+    post_result = prisma.post.find_many(where={"title": {"contains": query}}, order={"createdAt": "desc"})
+
+    if not post_result:
+        return render_template("explore.html", noResults=True)
+
+    author_id = 1
+    author = prisma.user.find_unique(where={"id": author_id})
+    for post in post_result:
+        post.content = Markup(post.content)
+        # Example custom markup
+        if len(post.content) > 40:
+            post.content = post.content[:40] + "..."
+    return render_template("explore.html", posts = post_result, author=author, showLogout=True)
+
+
