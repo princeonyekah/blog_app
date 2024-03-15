@@ -59,14 +59,15 @@ prevBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', () => {
-
-    const currentPageNumber = (window.location.pathname.split('/')[2].split('_')[1])
-    if (currentPageNumber < "{{ postsLength }}") {
-        window.location.href = `/all_blogs/pg_${parseInt(currentPageNumber) + 1}`
-    } else {
-        window.location.href = `/all_blogs/pg_${currentPageNumber}`
+    const currentPageNumber = parseInt(window.location.pathname.split('/')[2].split('_')[1]);
+    const navigationRange = {{ navigation_range }}; // Render navigation_range value from Flask to JavaScript
+    if (!isNaN(currentPageNumber) && currentPageNumber < navigationRange) {
+        window.location.href = `/all_blogs/pg_${currentPageNumber + 1}`;
     }
+    // Optionally, you can add an else block here to handle when the current page is already the last page or the value is not valid
 });
+
+
 </script>
 
 

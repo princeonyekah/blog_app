@@ -40,7 +40,11 @@ def get_author_id_from_token():
 #displays all the blogs on the website
 @post_routes.route("/all_blogs/<sectionvalue>", methods=["GET"])
 def all_blogs(sectionvalue):
-    page_number = int(sectionvalue[3:])
+    try:
+        page_number = int(sectionvalue[3:])
+    except ValueError:
+        return redirect(request.path)
+
     postsLength = prisma.post.count()
     posts_per_page = 9
     posts = prisma.post.find_many(order={"createdAt": "desc"})[posts_per_page*(page_number-1):posts_per_page*(page_number)]
@@ -65,8 +69,7 @@ def all_blogs(sectionvalue):
             post.content = Markup(post.content)
             if len(post.content) > 40:
                 post.content = post.content[:40] + "..."
-        return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author= None)
-
+        return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author=None)
 
 #displays blogs owned by writer
 @post_routes.route("/blogs", methods=["GET"])
