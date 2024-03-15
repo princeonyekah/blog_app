@@ -13,12 +13,6 @@ class Config:
 
     # Database configuration
     PRISMA = Prisma()
-    @classmethod
-    def configure(cls):
-        # Database configuration
-        prisma_command = ["prisma", "generate"]
-        subprocess.run(prisma_command)
-
 
     # Auth configuration
     SECRET_KEY = environ.get("SECRET_KEY", "secret-key")
