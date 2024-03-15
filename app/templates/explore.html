@@ -1,0 +1,40 @@
+{% set title = 'Explore Blog Posts' %}
+{% include "head.html" %}
+{% include "sidebar.html" %}
+
+<div class="container mt-4">
+
+    <!-- Search form -->
+    <form method="GET" action="{{ url_for('post.search_posts') }}" class="mb-4">
+        <div class="input-group">
+            <input class="form-control" type="text" name="query" placeholder="Search by title">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+
+    {% if noResults %}
+        <div class="alert alert-info" role="alert">
+            No results found.
+        </div>
+    {% else %}
+        <!-- Blog Post Cards -->
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-md-4">
+                <div class="card mb-4" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <img class="card-img-top" src="/static/uploads/{{ post.imageFilename }}" alt="Card image cap" style="width: 100%; height: 200px; object-fit: contain;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content | replace('{em}', '<em>') | replace('{/em}', '</em>') | replace('{strong}', '<strong>') | replace('{/strong}', '</strong>') }}</p>
+                        <div>
+                            <a href="/blog/{{ post.id }}" class="btn btn-outline-primary rounded-0 float-end">Read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+
