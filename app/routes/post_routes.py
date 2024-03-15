@@ -1,6 +1,6 @@
 """Post routes"""
-import shutil
-from flask import Blueprint, request, redirect, abort, render_template,url_for, Flask
+import math
+from flask import Blueprint, request, redirect, abort,render_template,url_for,Flask
 from app.utils.auth import authorize
 from flask_ckeditor import CKEditor
 from app.config import Config
@@ -40,11 +40,16 @@ def get_author_id_from_token():
 
 
 #displays all the blogs on the website
-@post_routes.route("/all_blogs", methods=["GET"])
-def all_blogs():
-    posts = prisma.post.find_many(order={"createdAt": "desc"})
+@post_routes.route("/all_blogs/<sectionvalue>", methods=["GET"])
+def all_blogs(sectionvalue):
+    page_number = int(sectionvalue[3:])
+    postsLength = prisma.post.count()
+    posts_per_page = 9
+    posts = prisma.post.find_many(order={"createdAt": "desc"})[posts_per_page*(page_number-1):posts_per_page*(page_number)]
     author_id = get_author_id_from_token()
-    if request.cookies.get("access_token"):
+    navigation_range = math.ceil(postsLength / posts_per_page)
+
+    if get_author_id_from_token():
         try:
             author_id = get_author_id_from_token()
             author = prisma.user.find_unique(where={"id": author_id})
@@ -53,23 +58,30 @@ def all_blogs():
                 post.content = Markup(post.content)
                 # Example custom markup
                 if len(post.content) > 40:
-
                     post.content = post.content[:40] + "..."
-            return render_template("all_blogs.html", posts=posts, author=author, showLogout=True)
+            return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author=author, showLogout=True)
         except Exception as e:
-            return render_template("all_blogs.html", posts=posts, error=str(e))
+            return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, error=str(e))
     else:
         for post in posts:
             post.content = Markup(post.content)
             if len(post.content) > 40:
                 post.content = post.content[:40] + "..."
-        return render_template("all_blogs.html", posts=posts, author= None)
+        return render_template("all_blogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author= None)
 
 #displays blogs owned by writer
 @post_routes.route("/blogs", methods=["GET"])
 def view_submitted():
     author = prisma.user.find_many()
     author_id = get_author_id_from_token()
+
+    page_number = request.args.get('page', default=1, type=int)
+    posts_per_page = 9
+    postsLength = prisma.post.count()
+    posts = prisma.post.find_many(order={"createdAt": "desc"})[posts_per_page*(page_number-1):posts_per_page*(page_number)]
+    author_id = get_author_id_from_token()
+    navigation_range = math.ceil(postsLength / posts_per_page)
+    print(navigation_range)
 
     if request.cookies.get("access_token"):
         try:
@@ -82,7 +94,7 @@ def view_submitted():
                 post.content = Markup(post.content)
                 if len(post.content) > 40:
                     post.content = post.content[:40] + "..."
-            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
+            return render_template("myblogs.html", posts=posts, navigation_range=navigation_range, postsLength=postsLength, author=author, showLogout=True)
         except Exception as e:
             return render_template("login.html",signIn= True, error=str(e))
     else:

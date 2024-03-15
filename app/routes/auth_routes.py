@@ -15,6 +15,7 @@ from app.utils.auth import authenticate, register_user
 from app.config import Config
 from datetime import timedelta
 from markupsafe import Markup
+import math
 
 prisma = Config.PRISMA
 
@@ -29,6 +30,12 @@ def login():
     """Show login page."""
     access_token = request.cookies.get("access_token")
     try:
+        page_number = request.args.get('page', default=1, type=int)
+        posts_per_page = 9
+        postsLength = prisma.post.count()
+        posts = prisma.post.find_many(order={"createdAt": "desc"})[posts_per_page*(page_number-1):posts_per_page*(page_number)]
+        navigation_range = math.ceil(postsLength / posts_per_page)
+        print(navigation_range)
         if access_token:
             # Decode the access token to extract author_id
             payload = jwt.decode(access_token, SECRET_KEY, algorithms=['HS256'])
@@ -41,7 +48,7 @@ def login():
                 post.content = Markup(post.content)
                 if len(post.content) > 40:
                     post.content = post.content[:40] + "..."
-            return render_template("myblogs.html", posts=posts, author=author, showLogout=True)
+            return render_template("myblogs.html", posts=posts, author=author, navigation_range=navigation_range, postsLength=postsLength, showLogout=True)
         else:
             return render_template("login.html", signIn = True, showLogout=False)
     except jwt.ExpiredSignatureError:
