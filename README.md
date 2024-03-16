@@ -1,48 +1,37 @@
 # Team Software Project Starter Template - Flask
 
-This example shows how to implement a basic app using:
+**InkVue Blog Application**
+InkVue is a simple blog application built using Flask, Prisma Database, HTML templates, Python files for routing, and JavaScript for interactivity. It allows users to perform CRUD (Create, Read, Update, Delete) operations on tasks.
 
-- [Flask](https://flask.palletsprojects.com/en/3.0.x/) 
-- [Prisma Client](https://prisma-client-py.readthedocs.io/en/stable/) as the ORM
-- A SQLite database file with some initial dummy data which you can find at [`./prisma/dev.db`](./prisma/dev.db)
-- [Bootstrap](https://getbootstrap.com/) for basic CSS Styling.
-- [Pytest](https://docs.pytest.org/en/7.4.x/) for unit testing
-- [pylint](https://pypi.org/project/pylint/) to statically analyze your code and find problems
-- [black: The Uncompromising Code Formatter](https://pypi.org/project/black/) to format your code
+**Features**
+-Create, Read, Update, and Delete tasks: Easily manage tasks with comprehensive CRUD functionality.
+-Simple and intuitive user interface: Designed for ease of use, ensuring a smooth user experience.
+-Prisma Database integration: Efficient data management powered by Prisma.
+-Flask-based backend: Utilizes Flask for server-side routing and handling requests.
+-HTML templates: Clear and customizable templates for rendering pages.
+-Enhanced interactivity: JavaScript enhances user interactivity and experience.
+## Installation
 
-It is intended to serve as a starting point for your Team Software Project course if you choose to use ExpressJS. It
-provides examples for performing basic tasks with different types of endpoints (GET, POST, etc.)
-
-## Getting started
-
-> Note: You may consider using pyenv to create a separate python environment that is configured specifically for this
-> app.  Please see the section below with the general steps for getting up and running with pyenv if you want to use
-> this path.
-
-### 1. Download example and install dependencies
-
-Clone this repository:
-
+1. Clone the repository:
 ```bash
 git clone git@github.com:kiboschool/tsp-flask-starter-template.git
 
 cd tsp-flask-starter-template
 
 ```
-
-Setup and activate your virtual environment:
+2. Setup and activate your virtual environment:
 
 `python3 -m venv .venv`
 
 `source .venv/bin/activate`
 
-Install dependencies:
+3. Install dependencies:
 
 ```bash
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-### 2. Create and seed the database
+4. Create and seed the database
 
 Run the following command to create your SQLite database file. This also creates the `User` and `Post` tables that are
 defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
@@ -57,7 +46,7 @@ Seed the database by running the `./prisma/seed.py` file
 python3 ./prisma/seed.py
 ```
 
-### 3. Interacting with the Starter Template
+**Interacting with the Starter Template**
 
 ```bash
 flask run
@@ -80,24 +69,40 @@ It means your virtual environment uses a different python version than the one i
 4. Source the file in the terminal using this command `source .venv/bin/activate`
 5. Run your flask project `flask run`
 
-### Additional Commands
 
-**pylint configuration is stored in the `.pylintrc` file.**
+**Access the application:**
 
-Check if the formatting matches pylint's rules by running
+Navigate to http://localhost:5000 in your browser.
 
-``` bash
-pylint app
-```
+**Future Development**
+InkVue is designed with future development in mind:
 
-Format your code with Black using this command:
+-Scalability: The application architecture is modular and scalable, allowing for easy expansion.
+-Customization: HTML templates and CSS stylesheets can be easily customized to match specific requirements.
+-Additional Features: Consider adding features such as user authentication, task categorization, share, comments and liking of a post
+-Performance Optimization: Continuously optimize code and database queries for improved performance.
 
-``` bash
-black app
-```
+**Project Organization**
+.venv folder
+app folder: Contains Flask application setup, routing, and main logic.
+templates floder: Directory for HTML templates.
+static/: Contains static files such as CSS, JavaScript, and images.
+requirements.txt: Lists project dependencies for easy installation
 
-Run unit tests with this command:
+**Acknowledgements**
+InkVue was made possible thanks to the following technologies and libraries:
 
-```bash
-pytest tests
-```
+Flask: A micro web framework for Python.
+Prisma: Modern Database Access for TypeScript & Node.js.
+
+**Contact**
+For any inquiries or issues regarding InkVue, feel free to contact the project maintainer at emmanuel.usen@kibo.school
+
+**Deployed Link:**
+https://ink-vue-test.onrender.com/
+
+**TeamGreatCodez**
+Princewill Onyekah - https://github.com/princeonyekah
+Emmanuel Usen - https://github.com/DauntlessUs
+Daniel Apolola - https://github.com/DannyBaine-Entity
+Destiny Williams - https://github.com/DESTINY16-debug

@@ -60,7 +60,17 @@ def login():
 
 @auth_routes.route("/login", methods=["POST"])
 def login_post():
-    """Login a user."""
+    # """Handle user login post request.
+
+    # This function handles the POST request for user login. It authenticates the user
+    # by verifying the provided email and password. If authentication is successful,
+    # it clears the session, sets a success message, generates an access token,
+    # and redirects the user to the user_posts route. Otherwise, it sets an error message
+    # and redirects the user to the login page.
+
+    # Returns:
+    #     Response: Redirects to appropriate route based on authentication status.
+    # """
     user = authenticate(request.form["email"], request.form["password"])
     if user:
         session.clear()
@@ -79,7 +89,14 @@ def login_post():
 
 @auth_routes.route("/logout", methods=["GET"])
 def logout():
-    """Logout a user."""
+    # """Handle user logout request.
+
+    # This function handles the GET request for user logout. It clears the session,
+    # deletes the access token cookie, and redirects the user to the homepage.
+
+    # Returns:
+    #     Response: Redirects to the homepage.
+    # """
     session.clear()
     resp = make_response(redirect("/"))
     resp.delete_cookie("access_token")
@@ -88,13 +105,24 @@ def logout():
 
 @auth_routes.route("/register", methods=["GET"])
 def register():
-    """Show register page."""
+    """Show register page.
+
+    This function renders the register page template.
+
+    Returns:
+        str: Rendered register page template.
+    """
     return render_template("register.html", showLogout=False)
 
 
 @auth_routes.route("/register", methods=["POST"])
 def register_post():
-    """Register a new user."""
+    # """Handle user registration post request. This function handles the POST request for user registration. It validates
+    # the provided email, checks if the user already exists, registers the user if not, and sets an appropriate message before redirecting to the login page.
+
+    # Returns:
+    #     Response: Redirects to appropriate route based on registration status.
+    # """
     email = request.form["email"]
     existing_user = prisma.user.find_unique(where={"email": email})
 
@@ -104,4 +132,5 @@ def register_post():
     register_user(request.form["name"], email, request.form["password"])
     session["error"] = "Registration Successful, please login."
     return redirect("/login")
+
 
