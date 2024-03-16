@@ -46,30 +46,6 @@ Seed the database by running the `./prisma/seed.py` file
 python3 ./prisma/seed.py
 ```
 
-**Interacting with the Starter Template**
-
-```bash
-flask run
-```
-
-If you encounter this error:
-```
-Traceback (most recent call last):
-  File "/opt/homebrew/lib/python3.10/site-packages/flask/cli.py", line 219, in locate_app
-    __import__(module_name)
-  File "/Users/msaudi/kibo/tsp-flask-starter-template/app/__init__.py", line 3, in <module>
-    from flask_jwt_extended import JWTManager
-ModuleNotFoundError: No module named 'flask_jwt_extended'
-```
-It means your virtual environment uses a different python version than the one in the environment itself. To fix this, do the following steps:
-
-1. Open this file `.venv/bin/activate` using your favorite text editor
-2. Add this line to the end of the file `export PYTHONPATH="./.venv/bin/python3"`
-3. Save and close the file
-4. Source the file in the terminal using this command `source .venv/bin/activate`
-5. Run your flask project `flask run`
-
-
 **Access the application:**
 
 Navigate to http://localhost:5000 in your browser.
